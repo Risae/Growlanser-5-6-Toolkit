@@ -1,7 +1,6 @@
 import sys
 import getopt
 
-
 ### Command line arguments code start
 args=sys.argv[1:]
 inputfile = ""
@@ -19,7 +18,6 @@ for opt, arg in opts:
     elif opt in ("-t", "--tablefile"):
         tablefile = arg
 ### End
-
 
 sdfBytesPosition = 40
 fileBeginning = -44
@@ -47,7 +45,7 @@ bytestream.seek(288, 1)
 
 bCStartLocationHex = bytestream.read(4).hex()
 
-# bC Start Location Hex
+# ByteCode Start Location Hex
 bCStartLocationHexbyte1 = bCStartLocationHex[0] + bCStartLocationHex[1]
 bCStartLocationHexbyte2 = bCStartLocationHex[2] + bCStartLocationHex[3]
 bCStartLocationHexbyte3 = bCStartLocationHex[4] + bCStartLocationHex[5]
@@ -56,7 +54,7 @@ newbCStartLocationHex = bCStartLocationHexbyte4 + bCStartLocationHexbyte3 + bCSt
 newbCStartLocationDecimal = int(newbCStartLocationHex, 16)
 
 
-# bC End Location Hex
+# ByteCode End Location Hex
 bCEndLocationHex = bytestream.read(4).hex()
 bCEndLocationHexbyte1 = bCEndLocationHex[0] + bCEndLocationHex[1]
 bCEndLocationHexbyte2 = bCEndLocationHex[2] + bCEndLocationHex[3]
@@ -78,6 +76,7 @@ bytestream.seek(-2, 1)
 bytestream.seek(-newbCStartLocationDecimal, 1)
 bytestream.seek(newbCRealStartLocationDecimal, 1)
 
+# Save ByteCode Start Hex in variable
 bCStartDecimal = bytestream.tell()
 bCStartHex = hex(bCStartDecimal)
 bCStartHexClean = bCStartHex.replace("0x", "")
@@ -85,6 +84,7 @@ bCStartHexClean = bCStartHex.replace("0x", "")
 bytestream.seek(-newbCRealStartLocationDecimal, 1)
 bytestream.seek(newbCEndLocationDecimal, 1)
 
+# Save ByteCode End Hex in variable
 bCEndDecimal = bytestream.tell()
 bCEndHex = hex(bCEndDecimal)
 bCEndHexClean = bCEndHex.replace("0x", "")
@@ -94,18 +94,17 @@ bytestream.close()
 
 ### Start of writing the hex information to the abcde commands file
 outputfile = (inputfile + "_commands.txt")
-abcdeCommands = open(outputfile, "w")
+with open(outputfile, "wt", encoding="utf8") as file:
+    file.write(
+f"""\
+#GAME NAME:            Growlanser 5/6
 
-abcdeCommands.write(
-        "#GAME NAME:            Growlanser 5/6\n"
-        "\n"
-        "#BLOCK NAME:           Dialogue Block (RAW)\n"
-        "#TYPE:                 NORMAL\n"
-        "#METHOD:               RAW\n"
-        "#SCRIPT START:         $" + bCStartHexClean + "\n"
-        "#SCRIPT STOP:          $" + bCEndHexClean + "\n"
-        "#TABLE:                " + tablefile + "\n"
-        "#COMMENTS:             No \n"
-        "#END BLOCK")
-
-abcdeCommands.close()
+#BLOCK NAME:            Dialogue Block (RAW)
+#TYPE:                  NORMAL
+#METHOD:                RAW
+#SCRIPT START:          ${bCStartHexClean}
+#SCRIPT STOP:           ${bCEndHexClean}
+#TABLE:                 {tablefile}
+#COMMENTS:              No
+#END BLOCK\
+""")

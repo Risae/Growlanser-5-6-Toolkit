@@ -1,7 +1,6 @@
 import sys
 import getopt
 
-
 ### Command line arguments code start
 args=sys.argv[1:]
 inputfile = ""
@@ -25,22 +24,18 @@ for opt, arg in opts:
 
 ### Check what file it is and create variables for the SDF section based on the file
 if inputfile.endswith(".SCEN"):
-    #print("SCEN File!")
     sdfBytesPosition = 56
     fileBeginning = -60
 
 elif inputfile.endswith(".SDMY"):
-    #print("STXT File!")
     sdfBytesPosition = 56
     fileBeginning = -60
 
 elif inputfile.endswith(".STXT"):
-    #print("STXT File!")
     sdfBytesPosition = 32
     fileBeginning = -36
 
 elif inputfile.endswith(".SCEC"):
-    #print("SCEC File!")
     sdfBytesPosition = 40
     fileBeginning = -44
 
@@ -132,8 +127,6 @@ if (bytestream.read(4).hex()) == "00000000":
         pointertableEndHexClean = pointertableEndHex.replace("0x", "")
 else:
     pointertableEndHexClean = scriptStartHexClean
-
-#print("Pointer Table End Hex .SCEN:", pointertableEndHexClean)
 ###
 
 # Close bytestream since its not used at this point
