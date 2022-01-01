@@ -6,7 +6,6 @@ clear = lambda: os.system("cls")
 clear()
 
 # Ask the user how to extract the files
-clear()
 quickBMSExtractionOption = input(
 """\
 Choose your Extraction Option:
@@ -19,7 +18,6 @@ Enter your number of the option you choose: \
 clear()
 
 # Tell user to put the files into the Script Files directory, clear the screen
-clear()
 placeFilesinFolderDialogue = input("Please place the Growlanser 5 or 6 file(s) inside the folder \"10_Input\" and press enter.")
 clear()
 
@@ -39,7 +37,7 @@ if quickBMSExtractionOption == "1":
     dir_list = os.listdir(inputFolder)
     for filename in dir_list:
 
-        # Execute quickBMS
+        # Execute quickBMS command
         subprocess.run(f"{quickBMSProgram} -w -d {growlanserquickBMS} \"{inputFolder}\\{filename}\" \"{outputFolder}\"")
 
 # If option 2 was chosen, start the extrended quickBMSExtraction process
@@ -49,7 +47,7 @@ if quickBMSExtractionOption == "2":
     dir_list = os.listdir(inputFolder)
     for filename in dir_list:
 
-        # Execute quickBMS
+        # Execute quickBMS command
         subprocess.run(f"{quickBMSProgram} -w -d {growlanserquickBMS} \"{inputFolder}\\{filename}\" \"{outputFolder}\"")
 
         # List the files inside "inputFolder" and execute commands on each file (loop)

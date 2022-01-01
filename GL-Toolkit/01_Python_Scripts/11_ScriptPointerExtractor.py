@@ -11,7 +11,7 @@ opts, args = getopt.getopt(args,"hi:c:t:",["inputfile=","comments=","tablefile="
 
 for opt, arg in opts:
     if opt == "-h":
-        print ("PointerExtractor.py -i <inputfile> -c <comments> -t <tablefile>")
+        print("PointerExtractor.py -i <inputfile> -c <comments> -t <tablefile>")
         sys.exit()
     elif opt in ("-i", "--inputfile"):
         inputfile = arg
@@ -133,26 +133,24 @@ else:
 bytestream.close()
 
 ### Start of writing the hex information to the abcde commands file
-outputfile = (inputfile + "_commands.txt")
-abcdeCommands = open(outputfile, "w")
+outputfile = f"{inputfile}_commands.txt"
+with open(outputfile, "wt", encoding="utf8") as file:
+    file.write(
+f"""\
+#GAME NAME:            Growlanser 5/6
 
-abcdeCommands.write(
-        "#GAME NAME:            Growlanser 5/6\n"
-        "\n"
-        "#BLOCK NAME:           Dialogue Block (POINTER_RELATIVE)\n"
-        "#TYPE:                 NORMAL\n"
-        "#METHOD:               POINTER_RELATIVE\n"
-        "#POINTER ENDIAN:       LITTLE\n"
-        "#POINTER TABLE START:  $" + pointerTableStartHexClean + "\n"
-        "#POINTER TABLE STOP:   $" + pointertableEndHexClean + "\n"
-        "#POINTER SIZE:         $04\n"
-        "#POINTER SPACE:        $00\n"
-        "#ATLAS PTRS:           Yes\n"
-        "#BASE POINTER:         $" + scriptStartHexClean + "\n"
-        "#TABLE:                " + tablefile + "\n"
-        "#COMMENTS:             " + comments + "\n"
-        "#SHOW END ADDRESS:     No\n"
-        "#END BLOCK")
-
-abcdeCommands.close()
-### End of writing the hex information into the abcde commands file
+#BLOCK NAME:           Dialogue Block (POINTER_RELATIVE)
+#TYPE:                 NORMAL
+#METHOD:               POINTER_RELATIVE
+#POINTER ENDIAN:       LITTLE
+#POINTER TABLE START:  ${pointerTableStartHexClean}
+#POINTER TABLE STOP:   ${pointertableEndHexClean}
+#POINTER SIZE:         $04
+#POINTER SPACE:        $00
+#ATLAS PTRS:           Yes
+#BASE POINTER:         ${scriptStartHexClean}
+#TABLE:                {tablefile}
+#COMMENTS:             {comments}
+#SHOW END ADDRESS:     No
+#END BLOCK\
+""")

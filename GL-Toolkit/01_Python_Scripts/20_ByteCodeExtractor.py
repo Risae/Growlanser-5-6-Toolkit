@@ -6,7 +6,6 @@ clear = lambda: os.system("cls")
 clear()
 
 # Tell user to put the files into the Script Files directory, clear the screen
-clear()
 placeFilesinFolderDialogue = input("Please place the Growlanser 5 or 6 file(s) inside the folder \"10_Input\" and press enter.")
 clear()
 

@@ -15,7 +15,6 @@ clear = lambda: os.system("cls")
 clear()
 
 # Call the ToolDialogue and save the input in the variable "tool", clear command prompt
-clear()
 tool = input(
 """\
 Welcome to the Growlanser 5 and 6 Toolkit! Made by Risae
