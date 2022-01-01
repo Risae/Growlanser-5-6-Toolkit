@@ -5,10 +5,6 @@ import subprocess
 clear = lambda: os.system("cls")
 clear()
 
-# Create the Script Files Input directory
-os.mkdir("10_Input")
-os.mkdir("11_Output")
-
 # Ask the user how to extract the files
 clear()
 quickBMSExtractionOption = input(
@@ -31,11 +27,10 @@ clear()
 currentFolderPath = os.getcwd()
 
 # Set variables for the filepaths and programs
-inputFolder = (str(currentFolderPath) + "\\10_Input")
-outputFolder = (str(currentFolderPath) + "\\11_Output")
-quickBMSProgram = ("\"" + str(currentFolderPath) + "\\00_3rd_Party_Programs\\quickbms\\quickbms.exe\"")
-growlanserquickBMS = ("\"" + str(currentFolderPath) + "\\00_3rd_Party_Programs\\quickbms\\growlanser.bms\"")
-
+inputFolder = f"{currentFolderPath}\\10_Input"
+outputFolder = f"{currentFolderPath}\\11_Output"
+quickBMSProgram = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\quickbms\\quickbms.exe\""
+growlanserquickBMS = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\quickbms\\growlanser.bms\""
 
 # If option 1 was chosen, start the quickBMSExtraction process
 if quickBMSExtractionOption == "1":
@@ -44,9 +39,8 @@ if quickBMSExtractionOption == "1":
     dir_list = os.listdir(inputFolder)
     for filename in dir_list:
 
-        # Create Perl (abcde) command and execute it
-        quickBMSCMD = (str(quickBMSProgram) + " -w -d " + str(growlanserquickBMS) + " \"" + str(inputFolder) + "\\" + str(filename) + "\" \"" + str(outputFolder) + "\"")
-        subprocess.run(quickBMSCMD)
+        # Execute quickBMS
+        subprocess.run(f"{quickBMSProgram} -w -d {growlanserquickBMS} \"{inputFolder}\\{filename}\" \"{outputFolder}\"")
 
 # If option 2 was chosen, start the extrended quickBMSExtraction process
 if quickBMSExtractionOption == "2":
@@ -55,12 +49,11 @@ if quickBMSExtractionOption == "2":
     dir_list = os.listdir(inputFolder)
     for filename in dir_list:
 
-        # Create quickBMS command and execute it
-        quickBMSCMD = (str(quickBMSProgram) + " -w -d " + str(growlanserquickBMS) + " \"" + str(inputFolder) + "\\" + str(filename) + "\" \"" + str(outputFolder) + "\"")
-        subprocess.run(quickBMSCMD)
+        # Execute quickBMS
+        subprocess.run(f"{quickBMSProgram} -w -d {growlanserquickBMS} \"{inputFolder}\\{filename}\" \"{outputFolder}\"")
 
         # List the files inside "inputFolder" and execute commands on each file (loop)
-        newOutputFolder = (outputFolder + "\\" + filename)
+        newOutputFolder = f"{outputFolder}\\{filename}"
 
         # Create a list of all the file extentions in the newOutputFolder
         SplitTypes=[]
@@ -71,7 +64,7 @@ if quickBMSExtractionOption == "2":
         newList = list(dict.fromkeys(SplitTypes))
 
         # Create blacklist of files that can't be extracted a second time (at least with the current quickbms script)
-        blacklist = ["000", "v_0", "b00", "sel", "her", "mot", "MAPTBL", "txt"]
+        blacklist = ["000", "v_0", "b00", "sel", "her", "mot", "MAPTBL", "txt", "MAPOBJ"]
 
         # If a blacklistItem is exists in newList, remove it from the list
         for blacklistItem in blacklist:
@@ -82,5 +75,5 @@ if quickBMSExtractionOption == "2":
         for fileType in newList:
 
             # Create quickBMS command and execute it
-            quickBMSCMD2 = (str(quickBMSProgram) + f" -w -d -F \"*.{fileType}\" " + str(growlanserquickBMS) + " \"" + str(newOutputFolder) + "\" \"" + str(newOutputFolder) + "\"")
+            quickBMSCMD2 = f"{quickBMSProgram} -w -d -F \"*.{fileType}\" {growlanserquickBMS} \"{newOutputFolder}\" \"{newOutputFolder}\""
             subprocess.run(quickBMSCMD2)

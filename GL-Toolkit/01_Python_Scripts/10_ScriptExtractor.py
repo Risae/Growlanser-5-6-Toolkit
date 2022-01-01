@@ -5,10 +5,6 @@ import subprocess
 clear = lambda: os.system("cls")
 clear()
 
-# Create the Script Files Input directory
-os.mkdir("10_Input")
-os.mkdir("11_Output")
-
 # Tell user to put the files into the Script Files directory, clear the screen
 clear()
 placeFilesinFolderDialogue = input("Please place the Growlanser 5 or 6 file(s) inside the folder \"10_Input\" and press enter.")
@@ -60,30 +56,29 @@ clear()
 currentFolderPath = os.getcwd()
 
 # Set PATHs for Perl
-os.environ["PATH"] += (";" + currentFolderPath + "\\00_3rd_Party_Programs\\abcde_v0_0_9\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\site\\bin") 
-os.environ["PATH"] += (";" + currentFolderPath + "\\00_3rd_Party_Programs\\abcde_v0_0_9\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\bin") 
-os.environ["PATH"] += (";" + currentFolderPath + "\\00_3rd_Party_Programs\\abcde_v0_0_9\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin") 
+os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\site\\bin"
+os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\bin"
+os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
 
 # Set variables for the Python and Perl commands
-inputFolder = (str(currentFolderPath) + "\\10_Input")
-outputFolder = (str(currentFolderPath) + "\\11_Output")
-abcdeProgram = ("\"" + str(currentFolderPath) + "\\00_3rd_Party_Programs\\abcde_v0_0_9\\abcde.pl\"")
-abcdeScriptTableFile = ("\"" + str(currentFolderPath) + "\\00_3rd_Party_Programs\\abcde_v0_0_9\\GL_Script.tbl\"")
-pythonScriptExtractor = ("\"" + str(currentFolderPath) + "\\01_Python_Scripts\\11_ScriptPointerExtractor.py\"")
+inputFolder = f"{currentFolderPath}\\10_Input"
+outputFolder = f"{currentFolderPath}\\11_Output"
+abcdeProgram = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\abcde.pl\""
+abcdeScriptTableFile = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\GL_Script.tbl\""
+pythonScriptExtractor = f"\"{currentFolderPath}\\01_Python_Scripts\\11_ScriptPointerExtractor.py\""
 
 # List the files inside "inputFolder" and execute commands on each file (loop)
 dir_list = os.listdir(inputFolder)
 for filename in dir_list:
 
-    # Create Python (pythonScriptExtractor) command and execute it
-    pythonCMD = ("python " + str(pythonScriptExtractor) + " -i " + "\"" + str(inputFolder) + "\\" + str(filename) + "\"" + " -c " + str(commentsOption) + " -t " + str(abcdeScriptTableFile))
-    subprocess.run(pythonCMD)
+    # Create variables for the files
+    inputFile = f"{inputFolder}\\{filename}"
+    outputFile = f"{outputFolder}\\{filename}_output"
+    outputFileName = f"{outputFile}.txt"
 
-    # Create Perl (abcde) command and execute it
-    perlCMD = ("perl " + str(abcdeProgram) + " -m bin2text -cm abcde::Cartographer " + "\"" + str(inputFolder) + "\\" + str(filename) + "\" \"" + str(inputFolder) + "\\" + str(filename) + "_commands.txt\" " + "\"" + str(outputFolder) + "\\" + str(filename) + "_output\" -s")
-    subprocess.run(perlCMD)
-
-    outputFileName = (str(outputFolder) + "\\" + str(filename) + "_output.txt")
+    # Execute pythonScriptExtractor and abcde
+    subprocess.run(f"python {pythonScriptExtractor} -i \"{inputFile}\" -c {commentsOption} -t {abcdeScriptTableFile}")
+    subprocess.run(f"perl {abcdeProgram} -m bin2text -cm abcde::Cartographer \"{inputFile}\" \"{inputFile}_commands.txt\" \"{outputFile}\" -s")
 
     # Read in the file, Replace the target string, Write the file out again
     with open(outputFileName, "rt", encoding="utf8") as file:
@@ -109,9 +104,10 @@ for filename in dir_list:
         # Example "$FA0" and "$FD0":
         # //POINTER #0 @ $FA0 - STRING #0 @ $FD0
         line2data  = lines[2]
+        pointerStart = (" ".join(line2data.split()[3:-5]))
         textBlockStart = (" ".join(line2data.split()[3:-5]))
-        pointerStartBroken = (line2data.split(" ")[8:][0])
-        pointerStart = pointerStartBroken.strip()
+        textBlockStartBroken = (line2data.split(" ")[8:][0])
+        textBlockStart = textBlockStartBroken.strip()
 
         # Create the Atlas code and insert the values
         abcdeAtlasCode = (

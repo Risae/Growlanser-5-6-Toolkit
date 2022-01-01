@@ -2,12 +2,13 @@ import os
 import shutil
 import subprocess
 
-# Delete the Input and output directory
+# Delete the Input and output directory and recreate it
 if os.path.exists("10_Input"):
     shutil.rmtree("10_Input")
-
 if os.path.exists("11_Output"):
     shutil.rmtree("11_Output")
+os.mkdir("10_Input")
+os.mkdir("11_Output")
 
 # Create "clear command prompt" variable and execute it
 clear = lambda: os.system("cls")
