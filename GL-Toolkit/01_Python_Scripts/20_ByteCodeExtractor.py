@@ -1,11 +1,17 @@
-from distutils.dir_util import copy_tree
-from sys import builtin_module_names
 import os
 import subprocess
-from pathlib import Path
 
 # Create "clear command prompt" variable and execute it
 clear = lambda: os.system("cls")
+clear()
+
+# Create the Script Files Input directory
+os.mkdir("10_Input")
+os.mkdir("11_Output")
+
+# Tell user to put the files into the Script Files directory, clear the screen
+clear()
+placeFilesinFolderDialogue = input("Please place the Growlanser 5 or 6 file(s) inside the folder \"10_Input\" and press enter.")
 clear()
 
 # Create a variable that holds the current path
@@ -18,6 +24,7 @@ os.environ["PATH"] += (";" + currentFolderPath + "\\00_3rd_Party_Programs\\abcde
 
 # Set variables for the Python and Perl commands
 inputFolder = (str(currentFolderPath) + "\\10_Input")
+outputFolder = (str(currentFolderPath) + "\\11_Output")
 abcdeProgram = ("\"" + str(currentFolderPath) + "\\00_3rd_Party_Programs\\abcde_v0_0_9\\abcde.pl\"")
 abcdeByteCodeTableFile = ("\"" + str(currentFolderPath) + "\\00_3rd_Party_Programs\\abcde_v0_0_9\\GL_ByteCode.tbl\"")
 pythonByteCodeExtractor = ("\"" + str(currentFolderPath) + "\\01_Python_Scripts\\21_ByteCodePointerExtractor.py\"")
@@ -31,5 +38,5 @@ for filename in dir_list:
     subprocess.run(pythonCMD)
 
     # Create Perl (abcde) command and execute it
-    perlCMD = ("perl " + str(abcdeProgram) + " -m bin2text --multi-table-files -cm abcde::Cartographer " + "\"" + str(inputFolder) + "\\" + str(filename) + "\" \"" + str(inputFolder) + "\\" + str(filename) + "_commands.txt\" " + "\"" + str(inputFolder) + "\\" + str(filename) + "_output\" -s")
+    perlCMD = ("perl " + str(abcdeProgram) + " -m bin2text --multi-table-files -cm abcde::Cartographer " + "\"" + str(inputFolder) + "\\" + str(filename) + "\" \"" + str(inputFolder) + "\\" + str(filename) + "_commands.txt\" " + "\"" + str(outputFolder) + "\\" + str(filename) + "_output\" -s")
     subprocess.run(perlCMD)

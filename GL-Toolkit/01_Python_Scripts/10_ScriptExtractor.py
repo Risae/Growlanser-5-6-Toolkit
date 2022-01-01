@@ -1,5 +1,3 @@
-from distutils.dir_util import copy_tree
-from sys import builtin_module_names
 import os
 import subprocess
 
@@ -7,8 +5,18 @@ import subprocess
 clear = lambda: os.system("cls")
 clear()
 
-# Create Dialogue option
-commentsOptionDialogue = (
+# Create the Script Files Input directory
+os.mkdir("10_Input")
+os.mkdir("11_Output")
+
+# Tell user to put the files into the Script Files directory, clear the screen
+clear()
+placeFilesinFolderDialogue = input("Please place the Growlanser 5 or 6 file(s) inside the folder \"10_Input\" and press enter.")
+clear()
+
+# Call the commentsOptionDialogue and save the result in commentsOption
+clear()
+commentsOption = input(
 """\
 Which abcde comments option do you want to use?
 
@@ -24,20 +32,6 @@ Anita[END-FF]
 
 Enter your number of the option you choose: \
 """)
-
-abcdeCodeOptionDialogue = (
-"""\
-Do you want to add abcde Atlas code on top of each dumped script?
-
-[1] Yes
-[2] No
-
-Enter your number of the option you choose: \
-""")
-
-# Call the commentsOptionDialogue and save the result in commentsOption
-clear()
-commentsOption = input(commentsOptionDialogue)
 clear()
 
 if commentsOption == "1":
@@ -51,7 +45,15 @@ elif commentsOption == "3":
 
 # Call the abcdeCodeOptionDialogue and save the result in abcdeAtlasOption
 clear()
-abcdeAtlasOption = input(abcdeCodeOptionDialogue)
+abcdeAtlasOption = input(
+"""\
+Do you want to add abcde Atlas code on top of each dumped script?
+
+[1] Yes
+[2] No
+
+Enter your number of the option you choose: \
+""")
 clear()
 
 # Create a variable that holds the current path
@@ -64,6 +66,7 @@ os.environ["PATH"] += (";" + currentFolderPath + "\\00_3rd_Party_Programs\\abcde
 
 # Set variables for the Python and Perl commands
 inputFolder = (str(currentFolderPath) + "\\10_Input")
+outputFolder = (str(currentFolderPath) + "\\11_Output")
 abcdeProgram = ("\"" + str(currentFolderPath) + "\\00_3rd_Party_Programs\\abcde_v0_0_9\\abcde.pl\"")
 abcdeScriptTableFile = ("\"" + str(currentFolderPath) + "\\00_3rd_Party_Programs\\abcde_v0_0_9\\GL_Script.tbl\"")
 pythonScriptExtractor = ("\"" + str(currentFolderPath) + "\\01_Python_Scripts\\11_ScriptPointerExtractor.py\"")
@@ -77,10 +80,10 @@ for filename in dir_list:
     subprocess.run(pythonCMD)
 
     # Create Perl (abcde) command and execute it
-    perlCMD = ("perl " + str(abcdeProgram) + " -m bin2text -cm abcde::Cartographer " + "\"" + str(inputFolder) + "\\" + str(filename) + "\" \"" + str(inputFolder) + "\\" + str(filename) + "_commands.txt\" " + "\"" + str(inputFolder) + "\\" + str(filename) + "_output\" -s")
+    perlCMD = ("perl " + str(abcdeProgram) + " -m bin2text -cm abcde::Cartographer " + "\"" + str(inputFolder) + "\\" + str(filename) + "\" \"" + str(inputFolder) + "\\" + str(filename) + "_commands.txt\" " + "\"" + str(outputFolder) + "\\" + str(filename) + "_output\" -s")
     subprocess.run(perlCMD)
 
-    outputFileName = (str(inputFolder) + "\\" + str(filename) + "_output.txt")
+    outputFileName = (str(outputFolder) + "\\" + str(filename) + "_output.txt")
 
     # Read in the file, Replace the target string, Write the file out again
     with open(outputFileName, "rt", encoding="utf8") as file:
