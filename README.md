@@ -6,7 +6,7 @@ Currently only works on Windows x64/x86.
 
 The following dependencies exist:
 
-- Python scripts = Python 3.9
+- Python scripts = Python 3.10.1
 - abcde = Perl
 - quickBMS = Windows x64/x86 OS
 

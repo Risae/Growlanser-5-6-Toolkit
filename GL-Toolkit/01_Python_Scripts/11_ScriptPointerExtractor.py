@@ -135,8 +135,7 @@ bytestream.close()
 ### Start of writing the hex information to the abcde commands file
 outputfile = f"{inputfile}_commands.txt"
 with open(outputfile, "wt", encoding="utf8") as file:
-    file.write(
-f"""\
+    file.write(f"""\
 #GAME NAME:            Growlanser 5/6
 
 #BLOCK NAME:           Dialogue Block (POINTER_RELATIVE)
@@ -152,5 +151,4 @@ f"""\
 #TABLE:                {tablefile}
 #COMMENTS:             {comments}
 #SHOW END ADDRESS:     No
-#END BLOCK\
-""")
+#END BLOCK""")

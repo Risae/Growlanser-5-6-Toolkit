@@ -15,33 +15,48 @@ clear = lambda: os.system("cls")
 clear()
 
 # Call the ToolDialogue and save the input in the variable "tool", clear command prompt
-tool = input(
-"""\
+tool = input("""\
 Welcome to the Growlanser 5 and 6 Toolkit! Made by Risae
 
 Which Growlanser 5 / 6 Tool do you want to use?
 
-[1] .SCEN/.SCEC/.SDMY/.STXT Extraction (Growlanser 5 / 6)
-[2] (Script) Bytecode Extraction (Growlanser 6)
-[3] GLX_XXXX.DAT Extraction (Growlanser 5 / 6)
-[4] GLX_XXXX.DAT Reinsertion (Growlanser 5 / 6)
+[1] .SCEN/.SCEC/.SDMY/.STXT: Extraction (Growlanser 5 / 6)
+[2] .SCEN/.SCEC/.SDMY/.STXT: Bytecode Extraction (Growlanser 6)
+[3] GLX_XXXX.DAT: Extraction (Growlanser 5 / 6)
+[4] GLX_XXXX.DAT: Reinsertion (Growlanser 5 / 6)
+[5] .SCEN/.SCEC/.SDMY/.STXT: Merger (Growlanser 5 / 6)
+[6] .SCEN/.SCEC/.SDMY/.STXT: Character Name Adder (Growlanser 5 / 6)
 
-Enter your number of the option you choose: \
-""")
+Enter your number of the option you choose: """)
 clear()
 
 # Execute the ScriptDump process 
 if tool == "1":
+    # Tell user to put the files into the Script Files directory, clear the screen
+    placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
+    clear()
     subprocess.call("python 01_Python_Scripts\\10_ScriptExtractor.py")
 
 # Execute the ByteCodeDump process 
 if tool == "2":
+    placeFilesinFolderDialogue = input("Please place the Growlanser 6 file(s) inside the folder \"10_Input\" and press enter.")
+    clear()
     subprocess.call("python 01_Python_Scripts\\20_ByteCodeExtractor.py")
 
-# Execute the ByteCodeDump process 
+# Execute the Extraction process 
 if tool == "3":
+    placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
+    clear()
     subprocess.call("python 01_Python_Scripts\\30_GameFileExtraction.py")
 
-# Execute the ByteCodeDump process 
+# Execute the Reinsertion process 
 if tool == "4":
+    placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) that you want to import inside the folder \"10_Input\".\nPlease place the Growlanser 5 / 6 \"GLX_XXXX.DAT\" file inside \"11_Output\" and press enter.")
+    clear()
     subprocess.call("python 01_Python_Scripts\\40_GameFileInsertion.py")
+
+# Execute the ScriptMerger process 
+if tool == "5":
+    placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
+    clear()
+    subprocess.call("python 01_Python_Scripts\\50_ScriptMerger.py")

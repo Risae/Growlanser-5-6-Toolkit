@@ -5,10 +5,6 @@ import subprocess
 clear = lambda: os.system("cls")
 clear()
 
-# Tell user to put the files into the Script Files directory, clear the screen
-placeFilesinFolderDialogue = input("Please place the Growlanser 5 or 6 file(s) inside the folder \"10_Input\" and press enter.")
-clear()
-
 # Call the commentsOptionDialogue and save the result in commentsOption
 commentsOption = input(
 """\
