@@ -13,3 +13,8 @@ The following dependencies exist:
 Python embeddable package, Strawberry Perl, abcde & quickBMS are inside the folder "00_3rd_Party_Programs".
 Everything "should" work out of the box, even if you don't have Python installed.
 Temporary PATHs will be created that point to the programs inside the folder "00_3rd_Party_Programs" so Python and Perl (abcde) scripts work.
+
+Growlanser 6 English Translation blog: https://growlanser6english.blogspot.com/ <br />
+Growlanser 6 Discord: https://discord.gg/59Nw2U2 <br />
+Growlanserver Discord: https://discord.gg/uVh3XxRGtG <br />
+Growlanser 5/6 Toolkit: https://github.com/Risae/Growlanser-5-6-Toolkit
