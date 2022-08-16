@@ -27,8 +27,8 @@ for names in dir_list:
 jpnstring = "".join(jpn)
 engstring = "".join(eng)
 
-jpnfile = f"{str(currentFolderPath)}\{jpnstring}"
-engfile = f"{str(currentFolderPath)}\{engstring}"
+jpnfile = f"{str(inputFolder)}\{jpnstring}"
+engfile = f"{str(inputFolder)}\{engstring}"
 
 with open(jpnfile, "rt", encoding="utf8") as file:
     with open("test.txt", "wt", encoding="utf8") as output:
