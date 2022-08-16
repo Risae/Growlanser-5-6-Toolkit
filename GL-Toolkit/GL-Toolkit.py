@@ -16,7 +16,7 @@ clear()
 
 # Call the ToolDialogue and save the input in the variable "tool", clear command prompt
 tool = input("""\
-Welcome to the Growlanser 5 and 6 Toolkit! Made by Risae
+Welcome to the Growlanser 5 and 6 Toolkit!
 
 Which Growlanser 5 / 6 Tool do you want to use?
 
