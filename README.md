@@ -1,13 +1,11 @@
-# Growlanser 5 & 6 Toolkit
-
 Work-In-Progress Growlanser 5 and 6 Toolkit, written in Python.
 
 Currently only works on Windows x64/x86.
 
 The following dependencies exist:
 
-- Python scripts = Python 3.10.1
-- abcde = Perl
+- Python scripts = Python 3.10.6
+- abcde = Strawberry Perl 5.32.1.1
 - quickBMS = Windows x64/x86 OS
 
 Python embeddable package, Strawberry Perl, abcde & quickBMS are inside the folder "00_3rd_Party_Programs".
