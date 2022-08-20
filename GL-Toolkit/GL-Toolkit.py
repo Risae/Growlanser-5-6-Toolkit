@@ -32,31 +32,35 @@ clear()
 
 # Execute the ScriptDump process 
 if tool == "1":
-    # Tell user to put the files into the Script Files directory, clear the screen
+    # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
     placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
     clear()
     subprocess.call("python 01_Python_Scripts\\10_ScriptExtractor.py")
 
 # Execute the ByteCodeDump process 
 if tool == "2":
+    # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
     placeFilesinFolderDialogue = input("Please place the Growlanser 6 file(s) inside the folder \"10_Input\" and press enter.")
     clear()
     subprocess.call("python 01_Python_Scripts\\20_ByteCodeExtractor.py")
 
 # Execute the Extraction process 
 if tool == "3":
+    # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
     placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
     clear()
     subprocess.call("python 01_Python_Scripts\\30_GameFileExtraction.py")
 
 # Execute the Reinsertion process 
 if tool == "4":
+    # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
     placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) that you want to import inside the folder \"10_Input\".\nPlease place the Growlanser 5 / 6 \"GLX_XXXX.DAT\" file inside \"11_Output\" and press enter.")
     clear()
     subprocess.call("python 01_Python_Scripts\\40_GameFileInsertion.py")
 
 # Execute the ScriptMerger process 
 if tool == "5":
+    # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
     placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
     clear()
     subprocess.call("python 01_Python_Scripts\\50_ScriptMerger.py")
