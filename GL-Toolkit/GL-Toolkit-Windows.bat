@@ -9,7 +9,7 @@ for %%i in ("%~dp0..") do set "FOLDERPATH=%%~fi"
 ::Place the Python embed folder path into PATH
 SET "PATH=%PATH%;%FOLDERPATH%\GL-Toolkit\00_3rd_Party_Programs\python-3.10.6-embed-amd64"
 
-::Check if the file GL-Toolkit.py exists - If it doesn't exist: tell the user
+::Check if the file "GL-Toolkit.py" exists - If it doesn't: tell the user
 IF EXIST "%~dp0GL-Toolkit.py" (
 	color 00
 	python GL-Toolkit.py
