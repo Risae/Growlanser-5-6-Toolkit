@@ -1,7 +1,7 @@
 import sys
 import getopt
 
-### Command line arguments code start
+### Command line arguments
 args=sys.argv[1:]
 inputfile = ""
 comments = ""
@@ -19,8 +19,6 @@ for opt, arg in opts:
         comments = arg
     elif opt in ("-t", "--tablefile"):
         tablefile = arg
-### End
-
 
 ### Check what file it is and create variables for the SDF section based on the file
 if inputfile.endswith(".SCEN"):
