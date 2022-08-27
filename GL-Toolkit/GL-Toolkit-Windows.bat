@@ -1,4 +1,7 @@
 @ECHO OFF
+::change CHCP to UTF-8
+CHCP 65001
+
 ::Set the size of the cmd window and the title of it
 mode 105,25
 title GL-Toolkit
