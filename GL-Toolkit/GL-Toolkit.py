@@ -25,7 +25,7 @@ Which Growlanser 5 / 6 Tool do you want to use?
 [3] GLX_XXXX.DAT: Extraction (Growlanser 5 / 6)
 [4] GLX_XXXX.DAT: Reinsertion (Growlanser 5 / 6)
 [5] .SCEN/.SCEC/.SDMY/.STXT: Merger (Growlanser 5 / 6)
-[6] .SCEN/.SCEC/.SDMY/.STXT: Character Name Adder (Growlanser 5 / 6)
+[6] .SCEN/.SCEC/.SDMY/.STXT: Character Name Adder (Growlanser 5 / 6) (WIP)
 
 Enter your number of the option you choose: """)
 clear()
@@ -61,6 +61,13 @@ if tool == "4":
 # Execute the ScriptMerger process 
 if tool == "5":
     # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
-    placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
+    placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.\nPlease make sure that the script files have the ending .ENG and .JPN!")
     clear()
     subprocess.call("python 01_Python_Scripts\\50_ScriptMerger.py")
+
+# Execute the ScriptMerger process 
+if tool == "6":
+    # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
+    placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
+    clear()
+    subprocess.call("python 01_Python_Scripts\\60_NameAdder.py")
