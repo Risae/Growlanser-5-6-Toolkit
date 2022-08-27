@@ -66,7 +66,6 @@ pointerTableStartDecimal = bytestream.tell()
 pointerTableStartHex = hex(pointerTableStartDecimal)
 pointerTableStartHexClean = pointerTableStartHex.replace("0x", "")
 
-#print("Pointer Table Start .SCEN:", pointerTableStartHexClean)
 ### End of Start of the pointer table
 
 
@@ -96,7 +95,6 @@ scriptStartDecimal = bytestream.tell()
 scriptStartHex = hex(scriptStartDecimal)
 scriptStartHexClean = scriptStartHex.replace("0x", "")
 
-#print("Script Start Hex .SCEN:", scriptStartHexClean)
 ###
 
 
