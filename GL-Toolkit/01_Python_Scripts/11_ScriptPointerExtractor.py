@@ -37,7 +37,6 @@ elif inputfile.endswith(".SCEC"):
     sdfBytesPosition = 40
     fileBeginning = -44
 
-
 # Open file in "read byte", move pointer to the bytes that point to SDF and read the next 4 bytes
 bytestream = open(inputfile, "rb")
 bytestream.seek(sdfBytesPosition, 1)
@@ -66,12 +65,8 @@ pointerTableStartDecimal = bytestream.tell()
 pointerTableStartHex = hex(pointerTableStartDecimal)
 pointerTableStartHexClean = pointerTableStartHex.replace("0x", "")
 
-### End of Start of the pointer table
-
-
 # Go to the SDF location
 bytestream.seek(-32, 1)
-
 
 ### Get Start of the script position into a variable 
 # Move 12 bytes ahead, read 4 bytes (start of the script) and reorder bytes into proper order
@@ -94,9 +89,6 @@ bytestream.seek(scriptLocationDecimal, 1)
 scriptStartDecimal = bytestream.tell()
 scriptStartHex = hex(scriptStartDecimal)
 scriptStartHexClean = scriptStartHex.replace("0x", "")
-
-###
-
 
 ### Start of the pointer table end
 bytestream.seek(-4, 1)
@@ -123,7 +115,7 @@ if (bytestream.read(4).hex()) == "00000000":
         pointertableEndHexClean = pointertableEndHex.replace("0x", "")
 else:
     pointertableEndHexClean = scriptStartHexClean
-###
+
 
 # Close bytestream since its not used at this point
 bytestream.close()
