@@ -75,6 +75,8 @@ for filename in dir_list:
         if (bytestream.read(16).hex()) == "835f837e815b837483408343838b0d0a":
             print(inputFile + " is a dummy file, moving on to the next file.")
             bytestream.close()
+
+        # If not a dummy file, start the actual script extraction.
         else:
             bytestream.close()
 
