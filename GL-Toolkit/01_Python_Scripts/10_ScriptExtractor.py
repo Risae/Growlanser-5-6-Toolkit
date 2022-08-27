@@ -80,13 +80,14 @@ for filename in dir_list:
     with open(outputFileName, "wt", encoding="utf8") as file:
         file.write(filedata)
 
-    # Readlines in the file, delete line 1-16 (premade abcde Atlas code), Write the file out again
+    # Readlines in the file, delete line 1-18 (premade abcde Atlas code), write 5 newlines at the end and write the file out again
     with open(outputFileName, "rt", encoding="utf8") as file:
         lines = file.readlines()
-    del lines[0:15]
+    del lines[0:17]
     with open(outputFileName, "wt", encoding="utf8") as file:
         for line in lines:
             file.write(line)
+        file.write("\n\n\n\n\n")
 
     # If abcdeAtlasOption = 1, then open the output file and read all lines
     if abcdeAtlasOption == "1":
