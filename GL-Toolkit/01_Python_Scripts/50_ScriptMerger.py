@@ -19,9 +19,9 @@ jpn = []
 eng = []
 
 for names in dir_list:
-    if names.endswith(".JPN"):
+    if names.endswith("JPN.txt"):
         jpn.append(names)
-    elif names.endswith(".ENG"):
+    elif names.endswith("ENG.txt"):
         eng.append(names)
 
 jpnstring = "".join(jpn)
