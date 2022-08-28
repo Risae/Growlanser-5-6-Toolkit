@@ -45,6 +45,28 @@ Enter your number of the option you choose: \
 """)
 clear()
 
+# Call the growlanserVersionOptionDialogue and save the result in growlanserVersionOption
+growlanserVersionOptionDialogue = input(
+"""\
+Which Game are you trying to dump the script from?
+
+[1] Growlanser 5 JPN
+[2] Growlanser 5 ENG
+[3] Growlanser 6 JPN
+
+Enter your number of the option you choose: \
+""")
+clear()
+
+if growlanserVersionOptionDialogue == "1":
+    growlanserVersionOption = "GL5JPN"
+
+elif growlanserVersionOptionDialogue == "2":
+    growlanserVersionOption = "GL5ENG"
+
+elif growlanserVersionOptionDialogue == "3":
+    growlanserVersionOption = "GL6JPN"
+
 # Create a variable that holds the current path
 currentFolderPath = os.getcwd()
 
@@ -66,17 +88,34 @@ for filename in dir_list:
 
     # Create variables for the files
     inputFile = f"{inputFolder}\\{filename}"
-    outputFile = f"{outputFolder}\\{filename}_output"
+    outputFile = f"{outputFolder}\\{filename}_{growlanserVersionOption}"
     outputFileName = f"{outputFile}.txt"
 
     # Chech if its a dummy file
     with open(inputFile, "rb") as bytestream:
         bytestream.seek(128, 1)
         if (bytestream.read(16).hex()) == "835f837e815b837483408343838b0d0a":
-            print(inputFile + " is a dummy file, moving on to the next file.")
+            print(inputFile + " is a dummy file, skipping file.")
             bytestream.close()
+            continue
 
-        # If not a dummy file, start the actual script extraction.
+        # Special kind of file that doesn't have text in it
+        bytestream.seek(-144, 1)
+        bytestream.seek(1408, 1)
+        if (bytestream.read(16).hex()) == "53444600000001004000000030000000":
+            print(inputFile + " is a file that doesn't really have text in it, skipping file.")
+            bytestream.close()
+            continue
+
+        # Special kind of file that doesn't have text in it
+        bytestream.seek(-1424, 1)
+        bytestream.seek(1152, 1)
+        if (bytestream.read(16).hex()) == "53444600000001004000000030000000":
+            print(inputFile + " is a file that doesn't really have text in it, skipping file.")
+            bytestream.close()
+            continue
+
+        # Everything else should be a real script file -> start the actual script extraction.
         else:
             bytestream.close()
 
