@@ -91,70 +91,44 @@ for filename in dir_list:
     outputFile = f"{outputFolder}\\{filename}_{growlanserVersionOption}"
     outputFileName = f"{outputFile}.txt"
 
-    # Chech if its a dummy file
-    with open(inputFile, "rb") as bytestream:
-        bytestream.seek(128, 1)
-        if (bytestream.read(16).hex()) == "835f837e815b837483408343838b0d0a":
-            print(inputFile + " is a dummy file, skipping file.")
-            bytestream.close()
-            continue
+    # Everything else should be a real script file -> start the actual script extraction.
+    try:
+        # Execute pythonScriptExtractor and abcde
+        subprocess.run(f"python {pythonScriptExtractor} -i \"{inputFile}\" -c {commentsOption} -t {abcdeScriptTableFile}")
+        subprocess.run(f"perl {abcdeProgram} -m bin2text -cm abcde::Cartographer \"{inputFile}\" \"{inputFile}_commands.txt\" \"{outputFile}\" -s")
 
-        # Special kind of file that doesn't have text in it
-        bytestream.seek(-144, 1)
-        bytestream.seek(1408, 1)
-        if (bytestream.read(16).hex()) == "53444600000001004000000030000000":
-            print(inputFile + " is a file that doesn't really have text in it, skipping file.")
-            bytestream.close()
-            continue
+        # Read in the file, Replace the target string, Write the file out again
+        with open(outputFileName, "rt", encoding="utf8") as file:
+            filedata = file.read()
+        filedata = filedata.replace("//POINTER #", "\n\n\n\n\n//POINTER #")
+        with open(outputFileName, "wt", encoding="utf8") as file:
+            file.write(filedata)
 
-        # Special kind of file that doesn't have text in it
-        bytestream.seek(-1424, 1)
-        bytestream.seek(1152, 1)
-        if (bytestream.read(16).hex()) == "53444600000001004000000030000000":
-            print(inputFile + " is a file that doesn't really have text in it, skipping file.")
-            bytestream.close()
-            continue
+        # Readlines in the file, delete line 1-18 (premade abcde Atlas code), write 5 newlines at the end and write the file out again
+        with open(outputFileName, "rt", encoding="utf8") as file:
+            lines = file.readlines()
+        del lines[0:17]
+        with open(outputFileName, "wt", encoding="utf8") as file:
+            for line in lines:
+                file.write(line)
+            file.write("\n\n\n\n\n")
 
-        # Everything else should be a real script file -> start the actual script extraction.
-        else:
-            bytestream.close()
-
-            # Execute pythonScriptExtractor and abcde
-            subprocess.run(f"python {pythonScriptExtractor} -i \"{inputFile}\" -c {commentsOption} -t {abcdeScriptTableFile}")
-            subprocess.run(f"perl {abcdeProgram} -m bin2text -cm abcde::Cartographer \"{inputFile}\" \"{inputFile}_commands.txt\" \"{outputFile}\" -s")
-
-            # Read in the file, Replace the target string, Write the file out again
-            with open(outputFileName, "rt", encoding="utf8") as file:
-                filedata = file.read()
-            filedata = filedata.replace("//POINTER #", "\n\n\n\n\n//POINTER #")
-            with open(outputFileName, "wt", encoding="utf8") as file:
-                file.write(filedata)
-
-            # Readlines in the file, delete line 1-18 (premade abcde Atlas code), write 5 newlines at the end and write the file out again
+        # If abcdeAtlasOption = 1, then open the output file and read all lines
+        if abcdeAtlasOption == "1":
             with open(outputFileName, "rt", encoding="utf8") as file:
                 lines = file.readlines()
-            del lines[0:17]
-            with open(outputFileName, "wt", encoding="utf8") as file:
-                for line in lines:
-                    file.write(line)
-                file.write("\n\n\n\n\n")
 
-            # If abcdeAtlasOption = 1, then open the output file and read all lines
-            if abcdeAtlasOption == "1":
-                with open(outputFileName, "rt", encoding="utf8") as file:
-                    lines = file.readlines()
+            # Copy the PointerStart and TextblockStart values from the first pointer
+            # Example "$FA0" and "$FD0":
+            # //POINTER #0 @ $FA0 - STRING #0 @ $FD0
+            line2data  = lines[2]
+            pointerStart = (" ".join(line2data.split()[3:-5]))
+            textBlockStart = (" ".join(line2data.split()[3:-5]))
+            textBlockStartBroken = (line2data.split(" ")[8:][0])
+            textBlockStart = textBlockStartBroken.strip()
 
-                # Copy the PointerStart and TextblockStart values from the first pointer
-                # Example "$FA0" and "$FD0":
-                # //POINTER #0 @ $FA0 - STRING #0 @ $FD0
-                line2data  = lines[2]
-                pointerStart = (" ".join(line2data.split()[3:-5]))
-                textBlockStart = (" ".join(line2data.split()[3:-5]))
-                textBlockStartBroken = (line2data.split(" ")[8:][0])
-                textBlockStart = textBlockStartBroken.strip()
-
-                # Create the Atlas code and insert the values
-                abcdeAtlasCode = (
+            # Create the Atlas code and insert the values
+            abcdeAtlasCode = (
 f"""\
 #VAR(dialogue, TABLE)
 #ADDTBL({abcdeScriptTableFile}, dialogue)
@@ -170,9 +144,12 @@ f"""\
 #HDR({textBlockStart})
 """)
 
-                # Open the outputFileName and save the Atlas code and after that the actual script in the file
-                with open(outputFileName,'rt', encoding="utf8") as contents:
-                    save = contents.read()
-                with open(outputFileName,'wt', encoding="utf8") as contents:
-                    contents.write(abcdeAtlasCode)
-                    contents.write(save)
+            # Open the outputFileName and save the Atlas code and after that the actual script in the file
+            with open(outputFileName,'rt', encoding="utf8") as contents:
+                save = contents.read()
+            with open(outputFileName,'wt', encoding="utf8") as contents:
+                contents.write(abcdeAtlasCode)
+                contents.write(save)
+    except:
+        print(inputFile + " does not contain a script or is a dummyfile, skipping the file.")
+        continue
