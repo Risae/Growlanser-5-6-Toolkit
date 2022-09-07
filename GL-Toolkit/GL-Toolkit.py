@@ -61,7 +61,7 @@ if tool == "4":
 # Execute the ScriptMerger process 
 if tool == "5":
     # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
-    placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.\nPlease make sure that the script files have the ending .ENG and .JPN!")
+    placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.\nPlease make sure that the script files have the ending '*ENG.txt' and '*JPN.txt'!")
     clear()
     subprocess.call("python 01_Python_Scripts\\50_ScriptMerger.py")
 
