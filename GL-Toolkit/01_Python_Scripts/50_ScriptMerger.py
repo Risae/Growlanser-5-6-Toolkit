@@ -66,8 +66,7 @@ if len(jpnfile_chunks) == len(engfile_chunks):
     # Save the merged script in an output file
     with open(outputFileName, "wt", encoding="utf8") as file:
         file.write(merged_content)
-
-    print("Successfully merged the script.")
+        print("Successfully merged the script.")    
 
 # If the scripts do not match
 else:
@@ -102,7 +101,7 @@ Japanese and English script below:
 {engstrings}
 
 [Enter] Both scripts match, continue to the next
-[2] No
+[1] No
 
 Enter your number of the option you choose: """)
             if decision == "1":
