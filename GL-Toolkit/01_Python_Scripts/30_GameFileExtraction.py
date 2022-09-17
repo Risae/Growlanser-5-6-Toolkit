@@ -12,7 +12,7 @@ Choose your Extraction Option:
 [1] Extract only the files inside GLX_XXXX.DAT
 [2] Extract the files inside GLX_XXXX.DAT and inside the extracted files
 
-Enter your number of the option you choose: """)
+Enter the number of the option you choose: """)
 clear()
 
 # Create a variable that holds the current path
