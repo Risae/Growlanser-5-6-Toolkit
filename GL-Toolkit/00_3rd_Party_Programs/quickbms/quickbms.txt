@@ -160,14 +160,14 @@ The following is the current list of options:
     Options:
     -l     list the files without extracting them
     -f W   filter the files to extract using the W wildcards separated by comma or
-           semicolon, example -f "*.mp3,*.txt;*myname*"
+           semicolon, example -f "{}.mp3,{}.txt;{}myname{}"
            if the filter starts with ! it's considered an ignore/exclusion filter,
-           it can be a text file containing multiple filters too, * and {} are same
-           example: quickbms -f "*.mp3;!*.ogg" script.bms archive.dat output
+           if .txt it's read as text file with multiple filters, * and {} are same
+           example: quickbms -f "{}.mp3;!{}.ogg" script.bms archive.dat output
            example: quickbms -f myfilters_list.txt script.bms archive.dat
            use {} instead of * to avoid issues on Windows, multiple -f are ok too
     -F W   as above but works only with the files in the input folder (if used)
-           example: quickbms -F "*.dat" script.bms input_folder output_folder
+           example: quickbms -F "{}.dat" script.bms input_folder output_folder
     -o     overwrite the output files without confirmation if they already exist
     -k     keep the current files if already exist without asking (skip all)
     -K     automatically rename the output files if duplicates already exist
@@ -190,12 +190,13 @@ The following is the current list of options:
     -D     like -d but without the folder with the filename, eg. models/mychar/*
     -E     automatically reverse the endianess of any input file by simply reading
            each field and writing the reversed value, each Get produces a Put
-    -c     old quick list of basic BMS commands and some notes about this tool
+    -c     quick list of basic BMS commands and some notes about this tool
     -S CMD execute the command CMD on each file extracted, you must specify the
            #INPUT# placeholder which will be replaced by the name of the file
            example: -S "lame.exe -b 192 -t --quiet #INPUT#"
     -Y     automatically answer yes to any question
-    -O F   redirect the output of all the extracted files to the output file F
+    -O F   redirect the concatenated extracted files to output file F, data is
+           appended if file F exists, optional F extensions supported: TAR
     -s SF  add a script file or command before the execution of the input script,
            useful if an archive uses a different endianess or encryption and so on
            SF can be a script or directly the bms instruction you want to execute
@@ -235,7 +236,7 @@ The following is the current list of options:
     -P CP  set the codepage to use (default utf8), it can be a number or string
     -T     do not delete the TEMPORARY_FILE at the end of the process
     -N     decimal names for files without a name: 0.dat instead of 00000000.dat
-    -e     ignore the compression errors and dump the (wrong) output data anyway
+    -e     ignore the compression errors and dump the (wrong) output data anyway,
            in reimport2 it disables the compression of the files (experimental)
     -J     all the constant strings are considered Java/C escaped strings (cstring)
     -B     debug option dumping all the non-parsed content of the open files, the
@@ -270,10 +271,11 @@ REQUIRED and they must be specified at the end of the command-line.
 The following is an example for listing all the mp3 files from the
 input archive:
 
-  quickbms -l -f "*.mp3" zip.bms myfile.zip
+  quickbms -l -f "{}.mp3" zip.bms myfile.zip
   quickbms -l -f "{}.mp3;{}.ogg" zip.bms myfile.zip
-  quickbms -l -f "*.mp3;*.ogg,*filename*" zip.bms myfile.zip
+  quickbms -l -f "{}.mp3;{}.ogg,{}filename{}" zip.bms myfile.zip
   quickbms -l -f file_containing_the_filters.txt zip.bms myfile.zip
+  (file_containing_the_filters.txt has one filter per each line)
 
 So -l for listing the files without extracting them, and -f for
 filtering the archived files. Regarding the -f and -F options it's
@@ -288,7 +290,7 @@ game directly using QuickBMS.
 Imagine to use the zip.bms script with all the zip files located in
 the Program Files folder:
 
-  quickbms -F "*.zip" zip.bms "c:\Program Files (x86)" c:\outfolder
+  quickbms -F "{}.zip" zip.bms "c:\Program Files (x86)" c:\outfolder
 
 Note: as said before, sometimes Windows doesn't like the * char
       even if used between quotes, so in case of problems with
@@ -641,9 +643,26 @@ Some important notes about the QuickBMS environment:
   this representation works.
   This is a solution for using binary data in the textual script.
   The keyword is "C language escape characters" or escape
-  sequences, they are very simple, take a look here:
-  http://msdn.microsoft.com/en-us/library/h21280bw%28VS.80%29.aspx
-  http://www.acm.uiuc.edu/webmonkeys/book/c_guide/1.1.html
+  sequences (or cstring), they are very simple, take a look here:
+  https://docs.microsoft.com/en-us/cpp/c-language/escape-sequences
+  From http://www.acm.uiuc.edu/webmonkeys/book/c_guide/1.1.html
+
+    Escape Name / Meaning
+    \a 	   Alert
+    \b     Backspace
+    \f     Form Feed
+    \n     New Line
+    \r     Carriage Return
+    \t     Horizontal Tab
+    \v     Vertical Tab
+    \'     Produces a single quote
+    \"     Produces a double quote
+    \?     Produces a question mark
+    \\     Produces a single backslash
+    \0     Produces a null character
+    \ddd   Defines one character by the octal digits (base-8)
+    \xdd   Defines one character by the hexadecimal digit (base-16)
+
   ONLY some commands support this C string notation for the escape
   characters, a quick way to find them is searching the keyword
   "(cstring)" without quotes in this document.
@@ -850,7 +869,7 @@ The list is ordered just like in defs.h:
 
     VARIABLE3       used in various software
 
-    VARIABLE4       used in Battlefield 3 (Frostbite engine)
+    VARIABLE4       used in Battlefield 3 (Frostbite engine) and Rar
 
     VARIABLE5       used in 7z archives
 
@@ -882,11 +901,11 @@ The list is ordered just like in defs.h:
     ASM_???         arm, arm_thumb, arm64, mips, mips64, ppc,
                     ppc64, sparc, sysz, xcore
 
-    TCC             a special type that compiles C text, currently experimental
-                    and not officially supported
+    TCC             a special type that compiles C text
 
     ???             the user will be asked to input a string that
-                    will be the new value of the variable
+                    will be the new value of the variable, prompt
+                    from user / pause
 
 Just for the record, the original MexScript probably contained some
 types of variables that have never been used and for which it's
@@ -982,6 +1001,8 @@ The following is the list of bms commands:
     Codepage VAR
     SLog NAME OFFSET SIZE [TYPE] [FILENUM] [TAG]
     Reimport [MODE]
+    ImpType MODE VAR [...]
+    CRCHash ALGO ARG1 ARG2
     Label NAME
     Break [NAME]
     Continue [NAME]
@@ -2143,6 +2164,9 @@ ComType ALGO [DICT] [DICT_SIZE]
                   as above but allows to specify a calldll command
                   executed on input: "#INPUT#", "#INPUT_SIZE#",
                   "#OUTPUT#", "#OUTPUT_SIZE#" and %VAR%
+                  full support also for pointers using the '&' or
+                  '*' prefix like &MEMORY_FILE, &VAR, &#INPUT#,
+                  &INPUT_SIZE
                 lz77_0
                 lzbss
                 bpaq0
@@ -2194,8 +2218,8 @@ ComType ALGO [DICT] [DICT_SIZE]
                 yakuza, used by SEGA CS1 team
                 lz4 (the algorithm of lz4hc is the same)
                 snappy
-                lunar_lz1  to lz19
-                lunar_rle1 to rle4
+                lunar_lz1  to lunar_lz19
+                lunar_rle1 to lunar_rle4
                 goldensun
                 luminousarc
                 lzv1
@@ -2715,6 +2739,27 @@ ComType ALGO [DICT] [DICT_SIZE]
                 lzsd_gba2
                 pzz
                 SL01
+                rage_xfs
+                wangan1
+                wangan2
+                wangan3
+                wangan5
+                LZ48
+                exo_decrunch
+                exo_decrunch_new
+                bitbuster
+                lazy
+                nibrans
+                LZRS_ASOBO
+                lzrhys
+                lze
+                zx0
+                zx1
+                zx2
+                zx5
+                rzip
+                melt1
+                melt2
 
                   --------------------------------
                   --- recompression algorithms ---
@@ -2893,6 +2938,9 @@ ComType ALGO [DICT] [DICT_SIZE]
                 LZ5F_COMPRESS
                 ppmdh_compress
                 ppmdi_compress
+                lunar_lz1_compress  to lunar_lz19_compress
+                lunar_rle1_compress to lunar_rle4_compress
+                coreonline_compress
 
                 *note: the updated list is available in comtype.h
 
@@ -3298,7 +3346,7 @@ Encryption ALGO KEY [IVEC] [MODE] [KEYLEN]
     provided key without using the log command, eg: encryption sha1
     "mystring".
     You can also specify the size in case it's a binary variable,
-    eg: encryption md5 "mystring" "" 0 8.
+    eg: encryption md5 "mystring" "" 0 8
     For the HMAC hash algorithm you must use the IVEC field, anyway
     remember that this feature is just optional.
     Regarding the OpenSSL algorithms, it's possible to enable the
@@ -3367,8 +3415,12 @@ Encryption ALGO KEY [IVEC] [MODE] [KEYLEN]
                     # 8bit xor incremented by 1 each time
                   encryption "incremental xor" 0 0x01
                     # 32bit rot starting from 0x100 incremented by
-                    # 0x11223344 each time
-                  encryption "incremental rot" 0x100 0x11223344
+                    # 0x11223344 each time, if the initial value
+                    # is <= 0xffff it's a 16bit, <= 0xff is 8bit,
+                    # the increment is checked too for guessing
+                  encryption "incremental rot"   0x12345 0x11223344
+                    # forced 32bit
+                  encryption "incremental rot32" 0x12345 0x11223344
                 charset, the substitution algorithm which uses a
                   charset of 256 chars
                 charset2, as above but substitution is inverted
@@ -3858,6 +3910,9 @@ Encryption ALGO KEY [IVEC] [MODE] [KEYLEN]
                     encryption calldll "test.dll myfunction cdecl RET #INPUT# #INPUT_SIZE# MYVAR"
                     get SIZE asize
                     log "newfile.mp3" 0 SIZE
+                  full support also for pointers using the '&' or
+                  '*' prefix like &MEMORY_FILE, &VAR, &#INPUT#,
+                  &INPUT_SIZE
                 "" "", disable the encryption
       KEY       The key to use with escapes like "\x11\x22\x33\x44"
                 or "this is my key" (cstring)
@@ -4046,7 +4101,7 @@ EndFunction
     till EndFunction) at the end of the scripts.
     It's also possible to pass optional arguments to the function,
     they will have the name of the function plus ARGnumber, eg:
-      MYFUNCTION_ARG1 amd MYFUNCTION_ARG2.
+      MYFUNCTION_ARG1 and MYFUNCTION_ARG2.
     Doesn't exist a return value at the moment but it's possible to
     do it in other ways like saving the value in an array or on a
     MEMORY_FILE.
@@ -4173,7 +4228,9 @@ CallDLL DLLNAME FUNC/OFF CONV RET [ARG1] [ARG2] ... [ARGn]
                   optlink
                   carion
                   tcc: use this type to compile the text of the
-                    input memory file like a C source code
+                    input memory file like a C source code, it
+                    automatically wraps the file operations like
+                    fgetc/fputc/fread/fwrite on the input/output
                   python: use the memory file like a python script
                     and invoking its functions, QuickBMS variables
                     are globally visible in the script (read-only
@@ -4491,6 +4548,72 @@ Reimport [MODE]
                 1   like reimport.bat
                 2   like reimport2.bat
                 3   reimport 3
+
+
+...................................................................
+
+ImpType MODE VAR [...]
+
+    This is an experimental expansion of a command that existed in
+    the original MultiEx language but wasn't needed in QuickBMS.
+    It's a way for replacing and updating any field of the file in
+    reimport mode and it's unrelated to any *Log operation.
+
+    Arguments and examples:
+
+        imptype var ORIGINAL_VAR NEW_VALUE
+            put NEW_VALUE at the location of ORIGINAL_VAR field
+
+        imptype var ORIGINAL_VAR
+            update the field where ORIGINAL_VAR was read with its
+            current value
+
+        imptype off -16 NEW_VALUE
+            put NEW_VALUE at the offset 16 bytes at the end of the
+            file, its size is the same of the field that has been
+            read at that location or a 32bit LONG if never read
+
+        imptype off 16 NEW_VALUE
+            as above but it's at offset 16
+
+        imptype crc ORIGINAL_VAR
+            replace the field of ORIGINAL_VAR with the current
+            content of QUICKBMS_CRC or QUICKBMS_HASH, it requires
+            the usage of Encryption with the relative crc/hash
+            algorithm used in the *Log operation
+            this command must be used AFTER *Log
+
+        imptype crc ORIGINAL_VAR ALGO ...
+            replace the field of ORIGINAL_VAR with the crc or hash
+            calculated during a *Log operation and based on the
+            chosen ALGO and its parameters, SAME as Encryption.
+            this command must be used BEFORE *Log.
+            the crc/hash is calculated on the data before
+            encryption and before compression
+            Example:
+                get MYCRC long          # read the field
+                imptype crc MYCRC md5 ""
+                comtype zlib
+                encryption xor "mykey"  # compatible with imptype
+                clog NAME OFFSET ZSIZE SIZE
+                imptype crc ""          # optional disable
+
+
+...................................................................
+
+CRCHash ALGO ARG1 ARG2
+
+    Experimental and unsupported command working just like
+    Encryption but meant mainly for hashing algorithms and
+    performed in different moments, it was meant to help in some
+    cases in reimport mode for example when both an encryption and
+    an hashing operation are necessary.
+    The command was introduced for testing the new behavior of
+    imptype and the different order of encryption and hashing in
+    reimport mode:
+        extraction: decryption + crchash     + decompression
+        reimport:   crchash    + compression + encryption
+
 
 ...................................................................
 
@@ -5206,8 +5329,7 @@ Compression:
 - 'Uses libLZR by BenHur' http://www.psp-programming.com/benhur/
 - lzs of Matthew Chapman http://www.rdesktop.org
 - yaz0 of thakis (http://www.amnoid.de/gc/)
-- RNC by Jon http://www.yoda.arachsys.com/dk/
-  or a fork made by Simon Tatham
+- RNC by Jon http://www.yoda.arachsys.com/dk/ or fork by Simon Tatham
 - PAK_explode of Cyril VOILA
 - The KENS Project Development Team
 - dragonballz by Geoffrey W. Curtis
@@ -5356,6 +5478,16 @@ Compression:
 - libdeflate https://github.com/ebiggers/libdeflate
 - zopfli https://github.com/google/zopfli
 - https://github.com/powzix/ooz
+- rage_xfs by Benjamin Haisch
+- Allen for Wangan decompressions
+- Exo Decrunch by Magnus Lind https://bitbucket.org/magli143/exomizer/wiki/Home
+- BitBuster https://www.teambomba.net/bombaman/downloadd26a.html
+- nibrans by BareRose https://github.com/BareRose/nibrans
+- lze by GORRY https://gorry.haun.org/pw/?lze
+- Shelwien of encode.su
+- Bitbuster of Team Bomba https://www.teambomba.net/bombaman/downloadd26a.html
+- lz48 by roudoudou
+- ZX compressions by Einar Saukas https://github.com/einar-saukas/ZX0
 
 Encryption:
 - all the algorithms provided by OpenSSL http://www.openssl.org
