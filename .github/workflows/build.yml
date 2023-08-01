@@ -3,7 +3,8 @@ name: Build Executable
 on:
   push:
     paths:
-      - "GL-Toolkit\\01_Python_Scripts"
+      - "GL-Toolkit/01_Python_Scripts"
+      - ".github/workflows"
 
 jobs:
   build:
