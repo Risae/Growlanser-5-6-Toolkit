@@ -1,10 +1,12 @@
 name: Build Executable
 
-on:
-  push:
-    paths:
-      - "GL-Toolkit/01_Python_Scripts"
-      - ".github/workflows"
+on: push
+
+# on:
+#   push:
+#     paths:
+#       - "GL-Toolkit/01_Python_Scripts"
+#       - ".github/workflows"
 
 jobs:
   build:
