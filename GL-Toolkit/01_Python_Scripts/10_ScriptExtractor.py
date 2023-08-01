@@ -93,7 +93,7 @@ for filename in dir_list:
 
     # Everything else should be a real script file -> start the actual script extraction.
     try:
-        # Execute pythonScriptExtractor and abcde
+        # Execute 11_ScriptPointerExtractor and abcde
         subprocess.run(f"python {pythonScriptExtractor} -i \"{inputFile}\" -c {commentsOption} -t {abcdeScriptTableFile}")
         subprocess.run(f"perl {abcdeProgram} -m bin2text -cm abcde::Cartographer \"{inputFile}\" \"{inputFile}_commands.txt\" \"{outputFile}\" -s")
 
