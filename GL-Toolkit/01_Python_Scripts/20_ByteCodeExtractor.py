@@ -9,9 +9,9 @@ clear()
 currentFolderPath = os.getcwd()
 
 # Set PATHs for Perl
-os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\site\\bin"
-os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\bin"
-os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
+os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\site\\bin"
+os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\bin"
+os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
 
 # Set variables for the Python and Perl commands
 inputFolder = f"{currentFolderPath}\\10_Input"
