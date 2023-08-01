@@ -1,0 +1,33 @@
+name: Build Executable
+
+on:
+  push:
+    paths:
+      - "GL-Toolkit\\01_Python_Scripts"
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          pyinstaller --version
+          ls -lah
+
+      # - name: Build executable
+      #   run: pyinstaller --name GL-Toolkit GL-Toolkit.py
+
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: GL-Toolkit.exe
+      #     path: dist/ # Replace with the path to the folder containing your executable
