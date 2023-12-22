@@ -10,14 +10,30 @@ jobs:
         with:
           sparse-checkout: | # Only copy specific folders to the container
             .github
-            build
             source
-            tools
 
-      - name: 02. Prepare files
+      - name: 02. Install Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: 03. Install pyinstaller
         shell: powershell
-        env:
-          TEST: ${{ secrets.TEST }}
-          TEST2: ${{ secrets.TEST2 }}
         run: |
-          choco install megatools --yes
+          pip install pyinstaller
+
+      - name: 04. Create EXE
+        shell: powershell
+        run: |
+          pyinstaller --onefile "$Env:GITHUB_WORKSPACE\source\main.py" --name GLToolkit
+
+      - name: 05. Check files
+        shell: powershell
+        run: |
+          ls "$Env:GITHUB_WORKSPACE\dist"
+
+      - name: 06. Publish EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: GLToolkit
+          path: ${{ github.workspace }}\dist
