@@ -78,8 +78,8 @@ os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-
 # Set variables for the Python and Perl commands
 inputFolder = f"{currentFolderPath}\\10_Input"
 outputFolder = f"{currentFolderPath}\\11_Output"
-abcdeProgram = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\abcde.pl\""
-abcdeScriptTableFile = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\GL_Script.tbl\""
+abcdeProgram = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde\\abcde.pl\""
+abcdeScriptTableFile = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde\\GL_Script.tbl\""
 pythonScriptExtractor = f"\"{currentFolderPath}\\01_Python_Scripts\\11_ScriptPointerExtractor.py\""
 
 # List the files inside "inputFolder" and execute commands on each file (loop)

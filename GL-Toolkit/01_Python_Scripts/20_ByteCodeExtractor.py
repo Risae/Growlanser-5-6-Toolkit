@@ -16,8 +16,8 @@ os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-
 # Set variables for the Python and Perl commands
 inputFolder = f"{currentFolderPath}\\10_Input"
 outputFolder = f"{currentFolderPath}\\11_Output"
-abcdeProgram = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\abcde.pl\""
-abcdeByteCodeTableFile = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde_v0_0_9\\GL_ByteCode.tbl\""
+abcdeProgram = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde\\abcde.pl\""
+abcdeByteCodeTableFile = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde\\GL_ByteCode.tbl\""
 pythonByteCodeExtractor = f"\"{currentFolderPath}\\01_Python_Scripts\\21_ByteCodePointerExtractor.py\""
 
 # List the files inside "inputFolder" and start a loop to execute commands on each file

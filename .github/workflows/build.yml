@@ -1,36 +1,23 @@
-name: Build Executable
-
-on: push
-
-# on:
-#   push:
-#     paths:
-#       - "GL-Toolkit/01_Python_Scripts"
-#       - ".github/workflows"
+name: Build EXE
+on: workflow_dispatch
 
 jobs:
-  build:
+  BuildEXE:
     runs-on: windows-2022
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install Python 3.11
-        uses: actions/setup-python@v2
+      - name: 01. Copy repository
+        uses: actions/checkout@v4
         with:
-          python-version: 3.11
+          sparse-checkout: | # Only copy specific folders to the container
+            .github
+            build
+            source
+            tools
 
-      - name: Install pyinstaller
+      - name: 02. Prepare files
+        shell: powershell
+        env:
+          TEST: ${{ secrets.TEST }}
+          TEST2: ${{ secrets.TEST2 }}
         run: |
-          pip install pyinstaller
-          pyinstaller --version
-          ls
-
-      # - name: Build executable
-      #   run: pyinstaller --name GL-Toolkit GL-Toolkit.py
-
-      # - name: Upload artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: GL-Toolkit.exe
-      #     path: dist/ # Replace with the path to the folder containing your executable
+          choco install megatools --yes
