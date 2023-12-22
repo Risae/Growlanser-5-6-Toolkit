@@ -198,15 +198,15 @@ def ScriptExtractor():
     currentFolderPath = os.getcwd()
 
     # Set PATHs for Perl
-    os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\site\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\site\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
 
     # Set variables for the Python and Perl commands
     inputFolder = f"{currentFolderPath}\\10_Input"
     outputFolder = f"{currentFolderPath}\\11_Output"
-    abcdeProgram = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde\\abcde.pl\""
-    abcdeScriptTableFile = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde\\GL_Script.tbl\""
+    abcdeProgram = f"\"{currentFolderPath}\\3rdparty\\abcde\\abcde.pl\""
+    abcdeScriptTableFile = f"\"{currentFolderPath}\\3rdparty\\abcde\\GL_Script.tbl\""
 
     # List the files inside "inputFolder" and execute commands on each file (loop)
     dir_list = os.listdir(inputFolder)
@@ -382,15 +382,15 @@ def ByteCodeExtractor():
     currentFolderPath = os.getcwd()
 
     # Set PATHs for Perl
-    os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\site\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\00_3rd_Party_Programs\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\site\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
 
     # Set variables for the Python and Perl commands
     inputFolder = f"{currentFolderPath}\\10_Input"
     outputFolder = f"{currentFolderPath}\\11_Output"
-    abcdeProgram = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde\\abcde.pl\""
-    abcdeByteCodeTableFile = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\abcde\\GL_ByteCode.tbl\""
+    abcdeProgram = f"\"{currentFolderPath}\\3rdparty\\abcde\\abcde.pl\""
+    abcdeByteCodeTableFile = f"\"{currentFolderPath}\\3rdparty\\abcde\\GL_ByteCode.tbl\""
 
     # List the files inside "inputFolder" and start a loop to execute commands on each file
     dir_list = os.listdir(inputFolder)
@@ -428,8 +428,8 @@ def GameFileExtraction():
     # Set variables for the filepaths and programs
     inputFolder = f"{currentFolderPath}\\10_Input"
     outputFolder = f"{currentFolderPath}\\11_Output"
-    quickBMSProgram = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\quickbms\\quickbms.exe\""
-    growlanserquickBMS = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\quickbms\\growlanser.bms\""
+    quickBMSProgram = f"\"{currentFolderPath}\\3rdparty\\quickbms\\quickbms.exe\""
+    growlanserquickBMS = f"\"{currentFolderPath}\\3rdparty\\quickbms\\growlanser.bms\""
 
     # If option 1 was chosen, start the quickBMSExtraction process
     if quickBMSExtractionOption == "1":
@@ -490,8 +490,8 @@ def GameFileInsertion():
     # Set variables for the filepaths and programs
     inputFolder = f"{currentFolderPath}\\10_Input"
     outputFolder = f"{currentFolderPath}\\11_Output"
-    quickBMSProgram = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\quickbms\\quickbms.exe\""
-    growlanserquickBMS = f"\"{currentFolderPath}\\00_3rd_Party_Programs\\quickbms\\growlanser.bms\""
+    quickBMSProgram = f"\"{currentFolderPath}\\3rdparty\\quickbms\\quickbms.exe\""
+    growlanserquickBMS = f"\"{currentFolderPath}\\3rdparty\\quickbms\\growlanser.bms\""
 
     # List the files inside "inputFolder" and execute commands on each file (loop)
     dir_list = os.listdir(outputFolder)
