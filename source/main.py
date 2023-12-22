@@ -203,8 +203,8 @@ def ScriptExtractor():
     os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
 
     # Set variables for the Python and Perl commands
-    inputFolder = f"{currentFolderPath}\\10_Input"
-    outputFolder = f"{currentFolderPath}\\11_Output"
+    inputFolder = f"{currentFolderPath}\\Input"
+    outputFolder = f"{currentFolderPath}\\Output"
     abcdeProgram = f"\"{currentFolderPath}\\3rdparty\\abcde\\abcde.pl\""
     abcdeScriptTableFile = f"\"{currentFolderPath}\\3rdparty\\abcde\\GL_Script.tbl\""
 
@@ -387,8 +387,8 @@ def ByteCodeExtractor():
     os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
 
     # Set variables for the Python and Perl commands
-    inputFolder = f"{currentFolderPath}\\10_Input"
-    outputFolder = f"{currentFolderPath}\\11_Output"
+    inputFolder = f"{currentFolderPath}\\Input"
+    outputFolder = f"{currentFolderPath}\\Output"
     abcdeProgram = f"\"{currentFolderPath}\\3rdparty\\abcde\\abcde.pl\""
     abcdeByteCodeTableFile = f"\"{currentFolderPath}\\3rdparty\\abcde\\GL_ByteCode.tbl\""
 
@@ -426,8 +426,8 @@ def GameFileExtraction():
     currentFolderPath = os.getcwd()
 
     # Set variables for the filepaths and programs
-    inputFolder = f"{currentFolderPath}\\10_Input"
-    outputFolder = f"{currentFolderPath}\\11_Output"
+    inputFolder = f"{currentFolderPath}\\Input"
+    outputFolder = f"{currentFolderPath}\\Output"
     quickBMSProgram = f"\"{currentFolderPath}\\3rdparty\\quickbms\\quickbms.exe\""
     growlanserquickBMS = f"\"{currentFolderPath}\\3rdparty\\quickbms\\growlanser.bms\""
 
@@ -488,8 +488,8 @@ def GameFileInsertion():
     currentFolderPath = os.getcwd()
 
     # Set variables for the filepaths and programs
-    inputFolder = f"{currentFolderPath}\\10_Input"
-    outputFolder = f"{currentFolderPath}\\11_Output"
+    inputFolder = f"{currentFolderPath}\\Input"
+    outputFolder = f"{currentFolderPath}\\Output"
     quickBMSProgram = f"\"{currentFolderPath}\\3rdparty\\quickbms\\quickbms.exe\""
     growlanserquickBMS = f"\"{currentFolderPath}\\3rdparty\\quickbms\\growlanser.bms\""
 
@@ -511,8 +511,8 @@ def ScriptMerger():
     currentFolderPath = os.getcwd()
 
     # Set variables for the filepaths and programs
-    inputFolder = f"{currentFolderPath}\\10_Input"
-    outputFolder = f"{currentFolderPath}\\11_Output"
+    inputFolder = f"{currentFolderPath}\\Input"
+    outputFolder = f"{currentFolderPath}\\Output"
 
     # Create variables based on the files in the inputFolder
     dir_list = os.listdir(inputFolder)
@@ -633,12 +633,12 @@ def NameAdder():
 def main():
 
     # Delete the Input and output directory and recreate it
-    if os.path.exists("10_Input"):
-        shutil.rmtree("10_Input")
-    if os.path.exists("11_Output"):
-        shutil.rmtree("11_Output")
-    os.mkdir("10_Input")
-    os.mkdir("11_Output")
+    if os.path.exists("Input"):
+        shutil.rmtree("Input")
+    if os.path.exists("Output"):
+        shutil.rmtree("Output")
+    os.mkdir("Input")
+    os.mkdir("Output")
 
     # Create "clear command prompt" variable and execute it
     clear = lambda: os.system("cls")
@@ -662,43 +662,43 @@ def main():
 
     # Execute the ScriptDump process 
     if tool == "1":
-        # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
-        placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
+        # Tell the user to put the files into the "Input" directory, clear the screen and execute the script
+        placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"Input\" and press enter.")
         clear()
         ScriptExtractor()
 
     # Execute the ByteCodeDump process 
     if tool == "2":
-        # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
-        placeFilesinFolderDialogue = input("Please place the Growlanser 6 file(s) inside the folder \"10_Input\" and press enter.")
+        # Tell the user to put the files into the "Input" directory, clear the screen and execute the script
+        placeFilesinFolderDialogue = input("Please place the Growlanser 6 file(s) inside the folder \"Input\" and press enter.")
         clear()
         ByteCodeExtractor()
 
     # Execute the Extraction process 
     if tool == "3":
-        # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
-        placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
+        # Tell the user to put the files into the "Input" directory, clear the screen and execute the script
+        placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"Input\" and press enter.")
         clear()
         GameFileExtraction()
 
     # Execute the Reinsertion process 
     if tool == "4":
-        # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
-        placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) that you want to import inside the folder \"10_Input\".\nPlease place the Growlanser 5 / 6 \"GLX_XXXX.DAT\" file inside \"11_Output\" and press enter.")
+        # Tell the user to put the files into the "Input" directory, clear the screen and execute the script
+        placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) that you want to import inside the folder \"Input\".\nPlease place the Growlanser 5 / 6 \"GLX_XXXX.DAT\" file inside \"Output\" and press enter.")
         clear()
         GameFileInsertion()
 
     # Execute the ScriptMerger process 
     if tool == "5":
-        # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
-        placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.\nPlease make sure that the script files have the ending '*ENG.txt' and '*JPN.txt'!")
+        # Tell the user to put the files into the "Input" directory, clear the screen and execute the script
+        placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"Input\" and press enter.\nPlease make sure that the script files have the ending '*ENG.txt' and '*JPN.txt'!")
         clear()
         ScriptMerger()
 
     # Execute the ScriptMerger process 
     if tool == "6":
-        # Tell the user to put the files into the "10_Input" directory, clear the screen and execute the script
-        placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"10_Input\" and press enter.")
+        # Tell the user to put the files into the "Input" directory, clear the screen and execute the script
+        placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"Input\" and press enter.")
         clear()
         NameAdder()
 
