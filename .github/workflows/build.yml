@@ -17,23 +17,24 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: 03. Install pyinstaller
+      - name: 03. Create EXE
         shell: powershell
         run: |
+          New-Item -ItemType Directory -Force -Verbose -Path "$Env:GITHUB_WORKSPACE\release"
           pip install pyinstaller
-
-      - name: 04. Create EXE
-        shell: powershell
-        run: |
           pyinstaller --onefile "$Env:GITHUB_WORKSPACE\source\main.py" --name GLToolkit
+          Move-Item -Verbose -Path "$Env:GITHUB_WORKSPACE\dist\GLToolkit.exe" -Destination "$Env:GITHUB_WORKSPACE\release\GLToolkit.exe"
 
-      - name: 05. Check files
-        shell: powershell
-        run: |
-          ls "$Env:GITHUB_WORKSPACE\dist"
+          echo "`n[i] Move 3rdparty folder"
+          New-Item -ItemType Directory -Force -Verbose -Path "$Env:GITHUB_WORKSPACE\release\3rdparty"
+          Move-Item -Verbose -Path "$Env:GITHUB_WORKSPACE\3rdparty\" -Destination "$Env:GITHUB_WORKSPACE\release\3rdparty\"
+
+          echo "`n[i] Download Strawberry Perl"
+          Invoke-WebRequest -Uri "https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/download/SP_5380_5361/strawberry-perl-5.38.0.1-64bit-portable.zip" -OutFile strawberry-perl.zip
+          #Expand-Archive strawberry-perl.zip -DestinationPath "$Env:GITHUB_WORKSPACE\release\3rdparty\strawberry-perl"
 
       - name: 06. Publish EXE
         uses: actions/upload-artifact@v4
         with:
           name: GLToolkit
-          path: ${{ github.workspace }}\dist
+          path: ${{ github.workspace }}\release
