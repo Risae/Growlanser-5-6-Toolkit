@@ -9,7 +9,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: | # Only copy specific folders to the container
-            .github
+            3rdparty
             source
 
       - name: 02. Install Python 3.11
@@ -26,14 +26,13 @@ jobs:
           Move-Item -Verbose -Path "$Env:GITHUB_WORKSPACE\dist\GLToolkit.exe" -Destination "$Env:GITHUB_WORKSPACE\release\GLToolkit.exe"
 
           echo "`n[i] Move 3rdparty folder"
-          New-Item -ItemType Directory -Force -Verbose -Path "$Env:GITHUB_WORKSPACE\release\3rdparty"
-          Move-Item -Verbose -Path "$Env:GITHUB_WORKSPACE\3rdparty\" -Destination "$Env:GITHUB_WORKSPACE\release\3rdparty\"
+          Move-Item -Verbose -Path "$Env:GITHUB_WORKSPACE\3rdparty\" -Destination "$Env:GITHUB_WORKSPACE\release\"
 
           echo "`n[i] Download Strawberry Perl"
-          Invoke-WebRequest -Uri "https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/download/SP_5380_5361/strawberry-perl-5.38.0.1-64bit-portable.zip" -OutFile strawberry-perl.zip
+          Invoke-WebRequest -Uri "https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/download/SP_5380_5361/strawberry-perl-5.38.0.1-64bit-portable.zip" -OutFile "$Env:GITHUB_WORKSPACE\release\3rdparty\strawberry-perl.zip"
           #Expand-Archive strawberry-perl.zip -DestinationPath "$Env:GITHUB_WORKSPACE\release\3rdparty\strawberry-perl"
 
-      - name: 06. Publish EXE
+      - name: 04. Publish EXE
         uses: actions/upload-artifact@v4
         with:
           name: GLToolkit
