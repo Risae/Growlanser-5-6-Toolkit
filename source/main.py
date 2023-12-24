@@ -76,9 +76,9 @@ Enter your number of the option you choose: \
     currentFolderPath = os.getcwd()
 
     # Set PATHs for Perl
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\site\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\perl\\site\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\perl\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\c\\bin"
 
     # Set variables for the Python and Perl commands
     inputFolder = f"{currentFolderPath}\\Input"
@@ -286,9 +286,9 @@ def ByteCodeExtractor():
     currentFolderPath = os.getcwd()
 
     # Set PATHs for Perl
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\site\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\perl\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl-5.32.1.1-64bit-portable\\c\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\perl\\site\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\perl\\bin"
+    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\c\\bin"
 
     # Set variables for the Python and Perl commands
     inputFolder = f"{currentFolderPath}\\Input"
