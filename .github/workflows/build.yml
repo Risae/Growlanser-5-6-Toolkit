@@ -20,6 +20,7 @@ jobs:
       - name: 03. Create EXE
         shell: powershell
         run: |
+          echo "`n[i] Create EXE"
           New-Item -ItemType Directory -Force -Verbose -Path "$Env:GITHUB_WORKSPACE\release"
           pip install pyinstaller
           pyinstaller --onefile "$Env:GITHUB_WORKSPACE\source\main.py" --name GLToolkit
