@@ -569,6 +569,7 @@ Do you want to semi-automatically perform the merge?
 [2] No
 
 Enter your number of the option you choose: """)
+
         clear_screen()
 
         # Execute the semi-automatic script merger
@@ -584,6 +585,7 @@ Enter your number of the option you choose: """)
 
             # Combine the chunks
             for jpnstrings, engstrings in zip(jpnfile_chunks, engfile_chunks):
+
                 decision = input(f"""\
 Japanese and English script below:
 {jpnstrings}
@@ -593,12 +595,14 @@ Japanese and English script below:
 [1] No
 
 Enter your number of the option you choose: """)
+
+                clear_screen()
+
                 if decision == "1":
                     merged = "\n\n\n\n\n" + engstrings
                 else:
                     merged = jpnstrings + engstrings
                 out_chunks.append(merged)
-                clear_screen()
 
             # Merge the chunks using the separator
             merged_content = separator.join(out_chunks)
@@ -643,33 +647,27 @@ Enter your number of the option you choose: """)
 
     clear_screen()
 
-    # Execute the ScriptDump process 
-    if tool == "1":
+    if tool == "1": # Execute the ScriptDump process
         placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"Input\" and press enter.")
         ScriptExtractor()
 
-    # Execute the ByteCodeDump process 
-    if tool == "2":
+    if tool == "2": # Execute the ByteCodeDump process
         placeFilesinFolderDialogue = input("Please place the Growlanser 6 file(s) inside the folder \"Input\" and press enter.")
         ByteCodeExtractor()
 
-    # Execute the Extraction process 
-    if tool == "3":
+    if tool == "3": # Execute the Extraction process
         placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"Input\" and press enter.")
         GameFileExtraction()
 
-    # Execute the Reinsertion process 
-    if tool == "4":
+    if tool == "4": # Execute the Reinsertion process
         placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) that you want to import inside the folder \"Input\".\nPlease place the Growlanser 5 / 6 \"GLX_XXXX.DAT\" file inside \"Output\" and press enter.")
         GameFileInsertion()
 
-    # Execute the ScriptMerger process 
-    if tool == "5":
+    if tool == "5": # Execute the ScriptMerger process
         placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"Input\" and press enter.\nPlease make sure that the script files have the ending '*ENG.txt' and '*JPN.txt'!")
         ScriptMerger()
 
-    # Execute the ScriptMerger process 
-    if tool == "6":
+    if tool == "6": # Execute the ScriptMerger process
         placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"Input\" and press enter.")
         NameAdder()
 
