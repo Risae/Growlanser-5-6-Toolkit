@@ -75,11 +75,6 @@ Enter your number of the option you choose: \
     # Create a variable that holds the current path
     currentFolderPath = os.getcwd()
 
-    # Set PATHs for Perl
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\perl\\site\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\perl\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\c\\bin"
-
     # Set variables for the Python and Perl commands
     inputFolder = f"{currentFolderPath}\\Input"
     outputFolder = f"{currentFolderPath}\\Output"
@@ -120,12 +115,7 @@ Enter your number of the option you choose: \
             sdfLocationHex = bytestream.read(4).hex()
 
             # Reorder bytes into proper order
-            sdfLocationHexbyte1 = sdfLocationHex[0] + sdfLocationHex[1]
-            sdfLocationHexbyte2 = sdfLocationHex[2] + sdfLocationHex[3]
-            sdfLocationHexbyte3 = sdfLocationHex[4] + sdfLocationHex[5]
-            sdfLocationHexbyte4 = sdfLocationHex[6] + sdfLocationHex[7]
-
-            newsdfLocationHex = sdfLocationHexbyte4 + sdfLocationHexbyte3 + sdfLocationHexbyte2 + sdfLocationHexbyte1
+            newsdfLocationHex = sdfLocationHex[6:8] + sdfLocationHex[4:6] + sdfLocationHex[2:4] + sdfLocationHex[0:2]
 
             # Convert hexadecimal value to decimal, go back to the beginning of the file and jump to the SDF location
             sdfLocationDecimal = int(newsdfLocationHex, 16)
@@ -150,12 +140,9 @@ Enter your number of the option you choose: \
             bytestream.seek(12, 1)
             scriptLocationHex = bytestream.read(4).hex()
 
-            scriptLocationHexbyte1 = scriptLocationHex[0] + scriptLocationHex[1]
-            scriptLocationHexbyte2 = scriptLocationHex[2] + scriptLocationHex[3]
-            scriptLocationHexbyte3 = scriptLocationHex[4] + scriptLocationHex[5]
-            scriptLocationHexbyte4 = scriptLocationHex[6] + scriptLocationHex[7]
+            # Reorder bytes into proper order
+            newscriptLocationHex = scriptLocationHex[6:8] + scriptLocationHex[4:6] + scriptLocationHex[2:4] + scriptLocationHex[0:2]
 
-            newscriptLocationHex = scriptLocationHexbyte4 + scriptLocationHexbyte3 + scriptLocationHexbyte2 + scriptLocationHexbyte1
 
             # Convert hexadecimal value to decimal, go back 16 bytes and move the amount of bytes ahead based of the locationdecimal
             scriptLocationDecimal = int(newscriptLocationHex, 16)
@@ -285,11 +272,6 @@ def ByteCodeExtractor():
     # Create a variable that holds the current path
     currentFolderPath = os.getcwd()
 
-    # Set PATHs for Perl
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\perl\\site\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\perl\\bin"
-    os.environ["PATH"] += f";{currentFolderPath}\\3rdparty\\strawberry-perl\\c\\bin"
-
     # Set variables for the Python and Perl commands
     inputFolder = f"{currentFolderPath}\\Input"
     outputFolder = f"{currentFolderPath}\\Output"
@@ -298,6 +280,7 @@ def ByteCodeExtractor():
 
     # List the files inside "inputFolder" and start a loop to execute commands on each file
     dir_list = os.listdir(inputFolder)
+
     for filename in dir_list:
 
         # Create variables for the files
@@ -314,51 +297,42 @@ def ByteCodeExtractor():
         bytestream.seek(sdfBytesPosition, 1)
         sdfLocationHex = bytestream.read(4).hex()
 
-        # Reorder bytes into proper order
-        sdfLocationHexbyte1 = sdfLocationHex[0] + sdfLocationHex[1]
-        sdfLocationHexbyte2 = sdfLocationHex[2] + sdfLocationHex[3]
-        sdfLocationHexbyte3 = sdfLocationHex[4] + sdfLocationHex[5]
-        sdfLocationHexbyte4 = sdfLocationHex[6] + sdfLocationHex[7]
-
-        newSDFLocationHex = sdfLocationHexbyte4 + sdfLocationHexbyte3 + sdfLocationHexbyte2 + sdfLocationHexbyte1
+        # Reorder bytes into proper order, example: 00 18 00 00 > 00 00 18 00
+        newSDFLocationHex = sdfLocationHex[6:8] + sdfLocationHex[4:6] + sdfLocationHex[2:4] + sdfLocationHex[0:2]
 
         # Convert hexadecimal value to decimal, go back to the beginning of the file and jump to the SDF location
         sdfLocationDecimal = int(newSDFLocationHex, 16)
         bytestream.seek(fileBeginning, 1)
         bytestream.seek(sdfLocationDecimal, 1)
 
-
+        # Go to the ByteCode Start Location
         bytestream.seek(288, 1)
-
         bCStartLocationHex = bytestream.read(4).hex()
 
         # ByteCode Start Location Hex
-        bCStartLocationHexbyte1 = bCStartLocationHex[0] + bCStartLocationHex[1]
-        bCStartLocationHexbyte2 = bCStartLocationHex[2] + bCStartLocationHex[3]
-        bCStartLocationHexbyte3 = bCStartLocationHex[4] + bCStartLocationHex[5]
-        bCStartLocationHexbyte4 = bCStartLocationHex[6] + bCStartLocationHex[7]
-        newbCStartLocationHex = bCStartLocationHexbyte4 + bCStartLocationHexbyte3 + bCStartLocationHexbyte2 + bCStartLocationHexbyte1
+        newbCStartLocationHex = bCStartLocationHex[6:8] + bCStartLocationHex[4:6] + bCStartLocationHex[2:4] + bCStartLocationHex[0:2]
+
+        # Convert hexadecimal value to decimal
         newbCStartLocationDecimal = int(newbCStartLocationHex, 16)
 
 
         # ByteCode End Location Hex
         bCEndLocationHex = bytestream.read(4).hex()
-        bCEndLocationHexbyte1 = bCEndLocationHex[0] + bCEndLocationHex[1]
-        bCEndLocationHexbyte2 = bCEndLocationHex[2] + bCEndLocationHex[3]
-        bCEndLocationHexbyte3 = bCEndLocationHex[4] + bCEndLocationHex[5]
-        bCEndLocationHexbyte4 = bCEndLocationHex[6] + bCEndLocationHex[7]
-        newbCEndLocationHex = bCEndLocationHexbyte4 + bCEndLocationHexbyte3 + bCEndLocationHexbyte2 + bCEndLocationHexbyte1
+        newbCEndLocationHex = bCEndLocationHex[6:8] + bCEndLocationHex[4:6] + bCEndLocationHex[2:4] + bCEndLocationHex[0:2]
+
+        # Convert hexadecimal value to decimal
         newbCEndLocationDecimal = int(newbCEndLocationHex, 16)
 
+        # Go back to the start of the bytecode section and jump to the beginning
         bytestream.seek(-168, 1)
         bytestream.seek(newbCStartLocationDecimal, 1)
 
+        # ByteCode Real Start Location Hex
         bCRealStartLocationHex = bytestream.read(2).hex()
-        bCRealStartLocationHexbyte1 = bCRealStartLocationHex[0] + bCRealStartLocationHex[1]
-        bCRealStartLocationHexbyte2 = bCRealStartLocationHex[2] + bCRealStartLocationHex[3]
-        newbCRealStartLocationHex = bCRealStartLocationHexbyte2 + bCRealStartLocationHexbyte1
+        newbCRealStartLocationHex = bCRealStartLocationHex[2:4] + bCRealStartLocationHex[0:2]
         newbCRealStartLocationDecimal = int(newbCRealStartLocationHex, 16)
 
+        # Go back to the start of the bytecode section and jump to the beginning
         bytestream.seek(-2, 1)
         bytestream.seek(-newbCStartLocationDecimal, 1)
         bytestream.seek(newbCRealStartLocationDecimal, 1)
@@ -393,7 +367,7 @@ def ByteCodeExtractor():
 #TABLE:                 {abcdeByteCodeTableFile}
 #COMMENTS:              No
 #END BLOCK""")
-        
+
         # Start abcde
         subprocess.run(f"perl {abcdeProgram} -m bin2text --multi-table-files -cm abcde::Cartographer \"{inputFile}\" \"{inputFile}_commands.txt\" \"{outputFileName}\" -s")
 
@@ -620,14 +594,6 @@ def NameAdder():
 
 def main(): # Main function
 
-    # Delete the Input and output directory and recreate it
-    if os.path.exists("Input"):
-        shutil.rmtree("Input")
-    if os.path.exists("Output"):
-        shutil.rmtree("Output")
-    os.mkdir("Input")
-    os.mkdir("Output")
-
     clear_screen()
 
     # Call the ToolDialogue and save the input in the variable "tool", clear command prompt
@@ -646,6 +612,17 @@ Which Growlanser 5 / 6 Tool do you want to use?
 Enter your number of the option you choose: """)
 
     clear_screen()
+
+    # Create a variable that holds the current path
+    currentFolderPath = os.getcwd()
+
+    # Delete the Input and Output directory and recreate it
+    if os.path.exists("Input"):
+        shutil.rmtree("Input")
+    if os.path.exists("Output"):
+        shutil.rmtree("Output")
+    os.mkdir("Input")
+    os.mkdir("Output")
 
     if tool == "1": # Execute the ScriptDump process
         placeFilesinFolderDialogue = input("Please place the Growlanser 5 / 6 file(s) inside the folder \"Input\" and press enter.")
