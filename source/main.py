@@ -23,7 +23,6 @@ Which Growlanser 5 / 6 Tool do you want to use?
 [3] GLX_XXXX.DAT: Extraction (Growlanser 5 / 6)
 [4] GLX_XXXX.DAT: Reinsertion (Growlanser 5 / 6)
 [5] .SCEN/.SCEC/.SDMY/.STXT: Merger (Growlanser 5 / 6)
-[6] .SCEN/.SCEC/.SDMY/.STXT: Character Name Adder (Growlanser 5 / 6) (WIP)
 
 Enter your number of the option you choose: """)
 
