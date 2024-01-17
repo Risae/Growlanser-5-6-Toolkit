@@ -3,7 +3,7 @@ Work-In-Progress Growlanser 5 and 6 Toolkit, written in Python. Only tested on W
 The following dependencies exist in order for the Toolkit to work:
 
 - `GL 5/6 Toolkit` = [Python 3.11.7](https://www.python.org/)
-- [abcde](https://www.romhacking.net/utilities/1392/) = [Strawberry Perl 5.38.0.1](https://strawberryperl.com/) (or Linux package)
+- [abcde](https://www.romhacking.net/utilities/1392/) = [Strawberry Perl 5.32.1.1](https://strawberryperl.com/) (or Linux package)
 - [quickBMS](http://aluigi.altervista.org/quickbms.htm) = Windows / Linux x64
 
 Directory structure:
