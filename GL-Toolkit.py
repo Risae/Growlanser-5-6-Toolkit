@@ -4,6 +4,7 @@ import subprocess
 import re
 import logging
 from pathlib import Path
+from textwrap import dedent
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
@@ -25,21 +26,20 @@ def ScriptExtractor():
     clear_screen()
 
     # Call the commentsOptionDialogue and save the result in commentsOption
-    commentsOption = input("""\
-Which abcde comments option do you want to use?
+    commentsOption = input(dedent("""\
+        Which abcde comments option do you want to use?
 
-[1] Yes - Which equals this formatting:
-//Anita[END-FF]
+        [1] Yes - Which equals this formatting:
+        //Anita[END-FF]
 
-[2] No - Which equals this formatting:
-Anita[END-FF]
+        [2] No - Which equals this formatting:
+        Anita[END-FF]
 
-[3] Both - Which equals this formatting:
-//Anita[END-FF]
-Anita[END-FF]
+        [3] Both - Which equals this formatting:
+        //Anita[END-FF]
+        Anita[END-FF]
 
-Enter your number of the option you choose: \
-""")
+        Enter your number of the option you choose: """))
 
     clear_screen()
 
@@ -53,27 +53,25 @@ Enter your number of the option you choose: \
         commentsOption = "Both"
 
     # Call the abcdeCodeOptionDialogue and save the result in abcdeAtlasOption
-    abcdeAtlasOption = input("""\
-Do you want to add abcde Atlas code on top of each dumped script?
+    abcdeAtlasOption = input(dedent("""\
+        Do you want to add abcde Atlas code on top of each dumped script?
 
-[1] Yes
-[2] No
+        [1] Yes
+        [2] No
 
-Enter your number of the option you choose: \
-""")
+        Enter your number of the option you choose: """))
 
     clear_screen()
 
     # Call the growlanserVersionOptionDialogue and save the result in growlanserVersionOption
-    growlanserVersionOptionDialogue = input("""\
-Which Game are you trying to dump the script from?
+    growlanserVersionOptionDialogue = input(dedent("""\
+        Which Game are you trying to dump the script from?
 
-[1] Growlanser 5 JPN
-[2] Growlanser 5 ENG
-[3] Growlanser 6 JPN
+        [1] Growlanser 5 JPN
+        [2] Growlanser 5 ENG
+        [3] Growlanser 6 JPN
 
-Enter your number of the option you choose: \
-""")
+        Enter your number of the option you choose: """))
 
     clear_screen()
 
@@ -224,26 +222,26 @@ Enter your number of the option you choose: \
             # Start of writing the hex information to the abcde commands file
             outputfileCommands = f"{filename}_commands.txt"
             with open(outputfileCommands, "wt", encoding="utf8") as file:
-                file.write(f"""\
-#GAME NAME:            Growlanser 5/6
+                file.write(dedent(f"""\
+                    #GAME NAME:            Growlanser 5/6
 
-#BLOCK NAME:           Dialogue Block (POINTER_RELATIVE)
-#TYPE:                 NORMAL
-#METHOD:               POINTER_RELATIVE
-#POINTER ENDIAN:       LITTLE
-#POINTER TABLE START:  ${pointerTableStartHexClean}
-#POINTER TABLE STOP:   ${pointertableEndHexClean}
-#POINTER SIZE:         $04
-#POINTER SPACE:        $00
-#ATLAS PTRS:           Yes
-#BASE POINTER:         ${scriptStartHexClean}
-#TABLE:                {abcdeScriptTableFile}
-#COMMENTS:             {commentsOption}
-#SHOW END ADDRESS:     No
-#END BLOCK""")
+                    #BLOCK NAME:           Dialogue Block (POINTER_RELATIVE)
+                    #TYPE:                 NORMAL
+                    #METHOD:               POINTER_RELATIVE
+                    #POINTER ENDIAN:       LITTLE
+                    #POINTER TABLE START:  ${pointerTableStartHexClean}
+                    #POINTER TABLE STOP:   ${pointertableEndHexClean}
+                    #POINTER SIZE:         $04
+                    #POINTER SPACE:        $00
+                    #ATLAS PTRS:           Yes
+                    #BASE POINTER:         ${scriptStartHexClean}
+                    #TABLE:                {abcdeScriptTableFile}
+                    #COMMENTS:             {commentsOption}
+                    #SHOW END ADDRESS:     No
+                    #END BLOCK"""))
 
             # Start abcde
-            subprocess.run(f"perl \"{abcdeProgram}\" -m bin2text -cm abcde::Cartographer \"{filename}\" \"{filename}_commands.txt\" \"{outputFileName}\" -s")
+            subprocess.run(f"perl \"{abcdeProgram}\" --stats --mode bin2text -cm abcde::Cartographer \"{filename}\" \"{filename}_commands.txt\" \"{outputFileName}\" -s")
 
             logging.info("Script dump finished, making some finishing touches on the dumped script...")
 
@@ -282,26 +280,25 @@ Enter your number of the option you choose: \
                 logging.info("Copying the PointerStart and TextblockStart values from the first pointer...")
                 # Example "$FA0" and "$FD0":
                 # //POINTER #0 @ $FA0 - STRING #0 @ $FD0
-                line2data  = lines[0]
-                pointerStart = (" ".join(line2data.split()[3:-5]))
-                textBlockStart = (" ".join(line2data.split()[3:-5]))
-                textBlockStartBroken = (line2data.split(" ")[8:][0])
-                textBlockStart = textBlockStartBroken.strip()
+                line2data  = lines[0].split() # Split the line into a list
+                pointerStart = " ".join(line2data[3:-5]) # Join the list items together, starting from the 4th item and ending at the 5th last item
+                textBlockStartBroken = line2data[8] # Get the 9th item in the list
+                textBlockStart = textBlockStartBroken.strip() # Remove the "\n" from the 9th item
 
                 logging.info("Creating the Atlas code and inserting the values...")
-                abcdeAtlasCode = (f"""\
-#VAR(dialogue, TABLE)
-#ADDTBL("GL_Script.tbl", dialogue)
-#ACTIVETBL(dialogue)
+                abcdeAtlasCode = dedent(f"""\
+                    #VAR(dialogue, TABLE)
+                    #ADDTBL("GL_Script.tbl", dialogue)
+                    #ACTIVETBL(dialogue)
 
-#VAR(PTR, CUSTOMPOINTER)
-#CREATEPTR(PTR, "LINEAR", {textBlockStart}, 32)
+                    #VAR(PTR, CUSTOMPOINTER)
+                    #CREATEPTR(PTR, "LINEAR", {textBlockStart}, 32)
 
-#VAR(PTRTBL, POINTERTABLE)
-#PTRTBL(PTRTBL, {pointerStart}, 4, PTR)
+                    #VAR(PTRTBL, POINTERTABLE)
+                    #PTRTBL(PTRTBL, {pointerStart}, 4, PTR)
 
-#JMP({textBlockStart})
-#HDR({textBlockStart})""")
+                    #JMP({textBlockStart})
+                    #HDR({textBlockStart})""")
 
                 logging.info("Opening the file and saving the Atlas code + the actual script...")
                 with open(f"{outputFileName}.txt",'rt', encoding="utf8") as contents:
@@ -412,17 +409,17 @@ def ByteCodeExtractor():
         # Start of writing the hex information to the abcde commands file
         outputfile = (inputFile + "_commands.txt")
         with open(outputfile, "wt", encoding="utf8") as file:
-            file.write(f"""\
-#GAME NAME:            Growlanser 5/6
+            file.write(dedent(f"""\
+                #GAME NAME:            Growlanser 5/6
 
-#BLOCK NAME:            Dialogue Block (RAW)
-#TYPE:                  NORMAL
-#METHOD:                RAW
-#SCRIPT START:          ${bCStartHexClean}
-#SCRIPT STOP:           ${bCEndHexClean}
-#TABLE:                 {abcdeByteCodeTableFile}
-#COMMENTS:              No
-#END BLOCK""")
+                #BLOCK NAME:            Dialogue Block (RAW)
+                #TYPE:                  NORMAL
+                #METHOD:                RAW
+                #SCRIPT START:          ${bCStartHexClean}
+                #SCRIPT STOP:           ${bCEndHexClean}
+                #TABLE:                 {abcdeByteCodeTableFile}
+                #COMMENTS:              No
+                #END BLOCK"""))
 
         # Start abcde
         subprocess.run(f"perl {abcdeProgram} -m bin2text --multi-table-files -cm abcde::Cartographer \"{inputFile}\" \"{inputFile}_commands.txt\" \"{outputFileName}\" -s")
@@ -433,13 +430,13 @@ def GameFileExtraction():
     clear_screen()
 
     # Ask the user how to extract the files
-    quickBMSExtractionOption = input("""\
-Choose your Extraction Option:
+    quickBMSExtractionOption = input(dedent("""\
+        Choose your Extraction Option:
 
-[1] Extract only the files inside GLX_XXXX.DAT
-[2] Extract the files inside GLX_XXXX.DAT and inside the extracted files
+        [1] Extract only the files inside GLX_XXXX.DAT
+        [2] Extract the files inside GLX_XXXX.DAT and inside the extracted files
 
-Enter the number of the option you choose: """)
+        Enter the number of the option you choose: """))
 
     clear_screen()
 
@@ -584,14 +581,14 @@ def ScriptMerger():
     else:
     
         # Ask the user if he wants to semi-automatically merge the scripts
-        question = input("""\
-The Japanese and English script does not have the same amount of entries.
-Do you want to semi-automatically perform the merge?
+        question = input(dedent("""\
+            The Japanese and English script does not have the same amount of entries.
+            Do you want to semi-automatically perform the merge?
 
-[1] Yes
-[2] No
+            [1] Yes
+            [2] No
 
-Enter your number of the option you choose: """)
+            Enter your number of the option you choose: """))
 
         clear_screen()
 
@@ -609,15 +606,15 @@ Enter your number of the option you choose: """)
             # Combine the chunks
             for jpnstrings, engstrings in zip(jpnfile_chunks, engfile_chunks):
 
-                decision = input(f"""\
-Japanese and English script below:
-{jpnstrings}
-{engstrings}
+                decision = input(dedent(f"""\
+                    Japanese and English script below:
+                    {jpnstrings}
+                    {engstrings}
 
-[Enter] Both scripts match, continue to the next
-[1] No
+                    [Enter] Both scripts match, continue to the next
+                    [1] No
 
-Enter your number of the option you choose: """)
+                    Enter your number of the option you choose: """))
 
                 clear_screen()
 
@@ -666,19 +663,19 @@ def main(): # Main function
     clear_screen()
 
     # Call the ToolDialogue and save the input in the variable "tool", clear command prompt
-    tool = input("""\
-Welcome to the Growlanser 5 and 6 Toolkit!
+    tool = input(dedent("""\
+        Welcome to the Growlanser 5 and 6 Toolkit!
 
-Which Growlanser 5 / 6 Tool do you want to use?
+        Which Growlanser 5 / 6 Tool do you want to use?
 
-[1] .SCEN/.SCEC/.SDMY/.STXT: Extraction (Growlanser 5 / 6)
-[2] .SCEN/.SCEC/.SDMY/.STXT: Bytecode Extraction (Growlanser 6)
-[3] GLX_XXXX.DAT: Extraction (Growlanser 5 / 6)
-[4] GLX_XXXX.DAT: Reinsertion (Growlanser 5 / 6)
-[5] .SCEN/.SCEC/.SDMY/.STXT: Merger (Growlanser 5 / 6)
-[6] .SCEN/.SCEC/.SDMY/.STXT: Character Name Adder (Growlanser 5 / 6) (WIP)
+        [1] .SCEN/.SCEC/.SDMY/.STXT: Extraction (Growlanser 5 / 6)
+        [2] .SCEN/.SCEC/.SDMY/.STXT: Bytecode Extraction (Growlanser 6)
+        [3] GLX_XXXX.DAT: Extraction (Growlanser 5 / 6)
+        [4] GLX_XXXX.DAT: Reinsertion (Growlanser 5 / 6)
+        [5] .SCEN/.SCEC/.SDMY/.STXT: Merger (Growlanser 5 / 6)
+        [6] .SCEN/.SCEC/.SDMY/.STXT: Character Name Adder (Growlanser 5 / 6) (WIP)
 
-Enter your number of the option you choose: """)
+        Enter your number of the option you choose: """))
 
     clear_screen()
 
