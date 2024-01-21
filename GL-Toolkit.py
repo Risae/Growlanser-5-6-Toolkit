@@ -107,26 +107,20 @@ def ScriptExtractor():
             logging.info(f"{filename.name}: Checking its is a dummy file...")
 
             with open(filename, "rb") as bytestream:
-                bytestream.seek(128, 1)
+
+                bytestream.seek(128, 0)
                 if (bytestream.read(16).hex()) == "835f837e815b837483408343838b0d0a":
                     logging.info(f"{filename.name}: is a dummy file, skipping file.")
-                    bytestream.close()
                     continue
 
-                # Special kind of file that doesn't have text in it
-                bytestream.seek(-144, 1)
-                bytestream.seek(1408, 1)
+                bytestream.seek(1408, 0) # 0 = beginning of the file
                 if (bytestream.read(16).hex()) == "53444600000001004000000030000000":
                     logging.info(f"{filename.name}: is a file that doesn't really have text in it, skipping file.")
-                    bytestream.close()
                     continue
 
-                # Special kind of file that doesn't have text in it
-                bytestream.seek(-1424, 1)
-                bytestream.seek(1152, 1)
+                bytestream.seek(1152, 0)
                 if (bytestream.read(16).hex()) == "53444600000001004000000030000000":
                     logging.info(f"{filename.name}: is a file that doesn't really have text in it, skipping file.")
-                    bytestream.close()
                     continue
 
             logging.info(f"{filename.name}: Checking what kind of script file it is, create variables for the SDF section based on the results...")
@@ -245,7 +239,7 @@ def ScriptExtractor():
                 lines = filedata.splitlines()
                 del lines[0:17]
 
-                # Write 5 newlines at the end
+                # Write 4 newlines at the end (5 would make it 6 in total at the end)
                 lines.append("\n\n\n\n")
 
                 # Move the pointer to the beginning of the file
@@ -318,13 +312,9 @@ def ByteCodeExtractor():
     # List the files inside "input_folder" and execute commands on each file (loop)
     for filename in inputFolder.iterdir():
 
-        # Execute pythonByteCodeExtractor and abcde
-        sdfBytesPosition = 40
-        fileBeginning = -44
-
         # Open file in "read byte", move pointer to the bytes that point to SDF and read the next 4 bytes
         with open(filename, "rb") as bytestream:
-            bytestream.seek(sdfBytesPosition, 1)
+            bytestream.seek(40, 0) # 0 = beginning of the file
             sdfLocationHex = bytestream.read(4).hex()
 
             # Reorder bytes into proper order
@@ -332,9 +322,9 @@ def ByteCodeExtractor():
 
             # Convert hexadecimal value to decimal, go back to the beginning of the file and jump to the SDF location
             sdfLocationDecimal = int(newSDFLocationHex, 16)
-            bytestream.seek(fileBeginning, 1)
-            bytestream.seek(sdfLocationDecimal, 1)
+            bytestream.seek(sdfLocationDecimal, 0) # 0 = beginning of the file
 
+            # ???
             bytestream.seek(288, 1)
 
             # ByteCode Start Location Hex
@@ -372,15 +362,13 @@ def ByteCodeExtractor():
             bytestream.seek(newbCRealStartLocationDecimal, 1)
 
             # Save ByteCode Start Hex in variable
-            bCStartDecimal = bytestream.tell()
-            bCStartHex = f"{bCStartDecimal:x}"
+            bCStartHex = format(bytestream.tell(), 'x')
 
             bytestream.seek(-newbCRealStartLocationDecimal, 1)
             bytestream.seek(newbCEndLocationDecimal, 1)
 
             # Save ByteCode End Hex in variable
-            bCEndDecimal = bytestream.tell()
-            bCEndHex = f"{bCEndDecimal:x}"
+            bCEndHex = format(bytestream.tell(), 'x')
 
         # Start of writing the hex information to the abcde commands file
         with open(f"{filename}_commands.txt", "wt", encoding="utf8") as file:
