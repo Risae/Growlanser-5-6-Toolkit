@@ -129,6 +129,7 @@ def ScriptExtractor():
                     continue
 
             logging.info("Checking what kind of script file it is, create variables for the SDF section based on the results...")
+
             if str(filename).endswith(".SCEN"):
                 sdfBytesPosition = 56
                 fileBeginning = -60
@@ -146,84 +147,73 @@ def ScriptExtractor():
                 fileBeginning = -44
 
             logging.info("Opening file in 'read byte' mode and doing some magic...")
-            bytestream = open(filename, "rb")
-            bytestream.seek(sdfBytesPosition, 1)
-            sdfLocationHex = bytestream.read(4).hex()
 
-            # Reorder bytes into proper order...
-            newsdfLocationHex = sdfLocationHex[6:8] + sdfLocationHex[4:6] + sdfLocationHex[2:4] + sdfLocationHex[0:2]
+            with open(filename, "rb") as bytestream:
+                bytestream.seek(sdfBytesPosition, 1)
+                sdfLocationHex = bytestream.read(4).hex()
 
-            # Convert hexadecimal value to decimal, go back to the beginning of the file and jump to the SDF location
-            sdfLocationDecimal = int(newsdfLocationHex, 16)
-            bytestream.seek(fileBeginning, 1)
-            bytestream.seek(sdfLocationDecimal, 1)
+                # Reorder bytes into proper order...
+                newsdfLocationHex = sdfLocationHex[6:8] + sdfLocationHex[4:6] + sdfLocationHex[2:4] + sdfLocationHex[0:2]
+
+                # Convert hexadecimal value to decimal, go back to the beginning of the file and jump to the SDF location
+                sdfLocationDecimal = int(newsdfLocationHex, 16)
+                bytestream.seek(fileBeginning, 1)
+                bytestream.seek(sdfLocationDecimal, 1)
 
 
-            ### Get Start of the pointer table position into a variable
-            # Move 32 bytes ahead (to the start of the pointer table)
-            bytestream.seek(32, 1)
+                ### Get Start of the pointer table position into a variable
+                # Move 32 bytes ahead to the start of the pointer table
+                bytestream.seek(32, 1)
 
-            # Create variable based of the current location in the file, convert from Decimal to Hex, remove 0x from Hex variable
-            pointerTableStartDecimal = bytestream.tell()
-            pointerTableStartHex = hex(pointerTableStartDecimal)
-            pointerTableStartHexClean = pointerTableStartHex.replace("0x", "")
+                # Save the start of the pointer table location as a hexadecimal string
+                pointerTableStartHex = format(bytestream.tell(), 'x')
 
-            # Go to the SDF location
-            bytestream.seek(-32, 1)
+                # Move 32 bytes back to the original SDF location
+                bytestream.seek(-32, 1)
 
-            ### Get Start of the script position into a variable 
-            # Move 12 bytes ahead, read 4 bytes (start of the script) and reorder bytes into proper order
-            bytestream.seek(12, 1)
-            scriptLocationHex = bytestream.read(4).hex()
+                ### Get Start of the script position into a variable 
+                # Move 12 bytes ahead, read 4 bytes (start of the script) and reorder bytes into proper order
+                bytestream.seek(12, 1)
+                scriptLocationHex = bytestream.read(4).hex()
 
-            # Reorder bytes into proper order
-            newscriptLocationHex = scriptLocationHex[6:8] + scriptLocationHex[4:6] + scriptLocationHex[2:4] + scriptLocationHex[0:2]
+                # Reorder bytes into proper order
+                newscriptLocationHex = scriptLocationHex[6:8] + scriptLocationHex[4:6] + scriptLocationHex[2:4] + scriptLocationHex[0:2]
 
-            # Convert hexadecimal value to decimal, go back 16 bytes and move the amount of bytes ahead based of the locationdecimal
-            scriptLocationDecimal = int(newscriptLocationHex, 16)
-            bytestream.seek(-16, 1)
-            bytestream.seek(scriptLocationDecimal, 1)
+                # Convert hexadecimal value to decimal, go back 16 bytes and move the amount of bytes ahead based of the locationdecimal
+                scriptLocationDecimal = int(newscriptLocationHex, 16)
+                bytestream.seek(-16, 1)
+                bytestream.seek(scriptLocationDecimal, 1)
 
-            # Create variable based of the current location in the file, Convert variable from Decimal to Hex, Remove 0x from Hex variable
-            scriptStartDecimal = bytestream.tell()
-            scriptStartHex = hex(scriptStartDecimal)
-            scriptStartHexClean = scriptStartHex.replace("0x", "")
+                # Save the start of the script location as a hexadecimal string
+                scriptStartHex = format(bytestream.tell(), 'x')
 
-            ### Start of the pointer table end
-            bytestream.seek(-4, 1)
+                ### Start of the pointer table end
+                bytestream.seek(-4, 1)
 
-            if (bytestream.read(4).hex()) == "00000000":
-                bytestream.seek(-8, 1)
+                # Check for consecutive 4-byte sequences of zeros in the binary file.
+                # When a non-zero 4-byte sequence is encountered, set `pointertableEndHex` to the current file location in hexadecimal.
+                # If the first 4-byte sequence is non-zero, set `pointertableEndHex` to `scriptStartHex`.
                 if (bytestream.read(4).hex()) == "00000000":
                     bytestream.seek(-8, 1)
                     if (bytestream.read(4).hex()) == "00000000":
                         bytestream.seek(-8, 1)
                         if (bytestream.read(4).hex()) == "00000000":
                             bytestream.seek(-8, 1)
+                            if (bytestream.read(4).hex()) == "00000000":
+                                bytestream.seek(-8, 1)
+                            else:
+                                pointertableEndHex = format(bytestream.tell(), 'x')
                         else:
-                            pointertableEndDecimal = bytestream.tell()
-                            pointertableEndHex = hex(pointertableEndDecimal)
-                            pointertableEndHexClean = pointertableEndHex.replace("0x", "")
+                            pointertableEndHex = format(bytestream.tell(), 'x')
                     else:
-                        pointertableEndDecimal = bytestream.tell()
-                        pointertableEndHex = hex(pointertableEndDecimal)
-                        pointertableEndHexClean = pointertableEndHex.replace("0x", "")
+                        pointertableEndHex = format(bytestream.tell(), 'x')
                 else:
-                    pointertableEndDecimal = bytestream.tell()
-                    pointertableEndHex = hex(pointertableEndDecimal)
-                    pointertableEndHexClean = pointertableEndHex.replace("0x", "")
-            else:
-                pointertableEndHexClean = scriptStartHexClean
-
-
-            # Close bytestream since its not used at this point
-            bytestream.close()
+                    pointertableEndHex = scriptStartHex
 
             logging.info("Finished intel gathering and preparing the script dump...")
 
-            # Start of writing the hex information to the abcde commands file
-            outputfileCommands = f"{filename}_commands.txt"
-            with open(outputfileCommands, "wt", encoding="utf8") as file:
+            # Create the abcde commands file
+            with open(f"{filename}_commands.txt", "wt", encoding="utf8") as file:
                 file.write(dedent(f"""\
                     #GAME NAME:            Growlanser 5/6
 
@@ -231,12 +221,12 @@ def ScriptExtractor():
                     #TYPE:                 NORMAL
                     #METHOD:               POINTER_RELATIVE
                     #POINTER ENDIAN:       LITTLE
-                    #POINTER TABLE START:  ${pointerTableStartHexClean}
-                    #POINTER TABLE STOP:   ${pointertableEndHexClean}
+                    #POINTER TABLE START:  ${pointerTableStartHex}
+                    #POINTER TABLE STOP:   ${pointertableEndHex}
                     #POINTER SIZE:         $04
                     #POINTER SPACE:        $00
                     #ATLAS PTRS:           Yes
-                    #BASE POINTER:         ${scriptStartHexClean}
+                    #BASE POINTER:         ${scriptStartHex}
                     #TABLE:                {abcdeScriptTableFile}
                     #COMMENTS:             {commentsOption}
                     #SHOW END ADDRESS:     No
@@ -288,6 +278,7 @@ def ScriptExtractor():
                 textBlockStart = textBlockStartBroken.strip() # Remove the "\n" from the 9th item
 
                 logging.info("Creating the Atlas code and inserting the values...")
+
                 abcdeAtlasCode = dedent(f"""\
                     #VAR(dialogue, TABLE)
                     #ADDTBL("GL_Script.tbl", dialogue)
@@ -303,8 +294,10 @@ def ScriptExtractor():
                     #HDR({textBlockStart})""")
 
                 logging.info("Opening the file and saving the Atlas code + the actual script...")
+
                 with open(f"{outputFileName}.txt",'rt', encoding="utf8") as contents:
                     save = contents.read()
+
                 with open(f"{outputFileName}.txt",'wt', encoding="utf8") as contents:
                     contents.write(abcdeAtlasCode)
                     contents.write("\n\n\n") # 3 newlines to give proper spacing
@@ -384,16 +377,14 @@ def ByteCodeExtractor():
 
             # Save ByteCode Start Hex in variable
             bCStartDecimal = bytestream.tell()
-            bCStartHex = hex(bCStartDecimal)
-            bCStartHexClean = bCStartHex.replace("0x", "")
+            bCStartHex = f"{bCStartDecimal:x}"
 
             bytestream.seek(-newbCRealStartLocationDecimal, 1)
             bytestream.seek(newbCEndLocationDecimal, 1)
 
             # Save ByteCode End Hex in variable
             bCEndDecimal = bytestream.tell()
-            bCEndHex = hex(bCEndDecimal)
-            bCEndHexClean = bCEndHex.replace("0x", "")
+            bCEndHex = f"{bCEndDecimal:x}"
 
         # Start of writing the hex information to the abcde commands file
         with open(f"{filename}_commands.txt", "wt", encoding="utf8") as file:
@@ -403,8 +394,8 @@ def ByteCodeExtractor():
                 #BLOCK NAME:            Dialogue Block (RAW)
                 #TYPE:                  NORMAL
                 #METHOD:                RAW
-                #SCRIPT START:          ${bCStartHexClean}
-                #SCRIPT STOP:           ${bCEndHexClean}
+                #SCRIPT START:          ${bCStartHex}
+                #SCRIPT STOP:           ${bCEndHex}
                 #TABLE:                 {abcdeByteCodeTableFile}
                 #COMMENTS:              No
                 #END BLOCK"""))
