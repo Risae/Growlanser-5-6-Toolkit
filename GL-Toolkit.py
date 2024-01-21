@@ -90,6 +90,7 @@ def ScriptExtractor():
         growlanserVersionOption = "GL6JPN"
 
     logging.info("The following files will be processed:")
+
     for filename in inputFolder.iterdir():
         logging.info(filename.name)
 
@@ -103,12 +104,12 @@ def ScriptExtractor():
 
         try:
 
-            logging.info(f"Checking if {filename.name} is a dummy file...")
+            logging.info(f"{filename.name}: Checking its is a dummy file...")
 
             with open(filename, "rb") as bytestream:
                 bytestream.seek(128, 1)
                 if (bytestream.read(16).hex()) == "835f837e815b837483408343838b0d0a":
-                    print(f"{filename.name} is a dummy file, skipping file.")
+                    logging.info(f"{filename.name}: is a dummy file, skipping file.")
                     bytestream.close()
                     continue
 
@@ -116,7 +117,7 @@ def ScriptExtractor():
                 bytestream.seek(-144, 1)
                 bytestream.seek(1408, 1)
                 if (bytestream.read(16).hex()) == "53444600000001004000000030000000":
-                    print(f"{filename.name} is a file that doesn't really have text in it, skipping file.")
+                    logging.info(f"{filename.name}: is a file that doesn't really have text in it, skipping file.")
                     bytestream.close()
                     continue
 
@@ -124,42 +125,37 @@ def ScriptExtractor():
                 bytestream.seek(-1424, 1)
                 bytestream.seek(1152, 1)
                 if (bytestream.read(16).hex()) == "53444600000001004000000030000000":
-                    print(f"{filename.name} is a file that doesn't really have text in it, skipping file.")
+                    logging.info(f"{filename.name}: is a file that doesn't really have text in it, skipping file.")
                     bytestream.close()
                     continue
 
-            logging.info("Checking what kind of script file it is, create variables for the SDF section based on the results...")
+            logging.info(f"{filename.name}: Checking what kind of script file it is, create variables for the SDF section based on the results...")
 
-            if str(filename).endswith(".SCEN"):
+            # Depending on the file extension, set the sdfBytesPosition and fileBeginning variables
+            if str(filename.name).endswith(".SCEN"):
                 sdfBytesPosition = 56
-                fileBeginning = -60
 
-            elif str(filename).endswith(".SDMY"):
+            elif str(filename.name).endswith(".SDMY"):
                 sdfBytesPosition = 56
-                fileBeginning = -60
 
-            elif str(filename).endswith(".STXT"):
+            elif str(filename.name).endswith(".STXT"):
                 sdfBytesPosition = 32
-                fileBeginning = -36
 
-            elif str(filename).endswith(".SCEC"):
+            elif str(filename.name).endswith(".SCEC"):
                 sdfBytesPosition = 40
-                fileBeginning = -44
 
-            logging.info("Opening file in 'read byte' mode and doing some magic...")
+            logging.info(f"{filename.name}: Opening file in 'read byte' mode and doing some magic...")
 
             with open(filename, "rb") as bytestream:
                 bytestream.seek(sdfBytesPosition, 1)
                 sdfLocationHex = bytestream.read(4).hex()
 
-                # Reorder bytes into proper order...
+                # Reorder bytes into proper order
                 newsdfLocationHex = sdfLocationHex[6:8] + sdfLocationHex[4:6] + sdfLocationHex[2:4] + sdfLocationHex[0:2]
 
-                # Convert hexadecimal value to decimal, go back to the beginning of the file and jump to the SDF location
+                # Convert hexadecimal value to decimal and jump to the SDF location
                 sdfLocationDecimal = int(newsdfLocationHex, 16)
-                bytestream.seek(fileBeginning, 1)
-                bytestream.seek(sdfLocationDecimal, 1)
-
+                bytestream.seek(sdfLocationDecimal, 0) # 0 = beginning of the file
 
                 ### Get Start of the pointer table position into a variable
                 # Move 32 bytes ahead to the start of the pointer table
@@ -210,7 +206,7 @@ def ScriptExtractor():
                 else:
                     pointertableEndHex = scriptStartHex
 
-            logging.info("Finished intel gathering and preparing the script dump...")
+            logging.info(f"{filename.name}: Finished intel gathering and preparing the script dump...")
 
             # Create the abcde commands file
             with open(f"{filename}_commands.txt", "wt", encoding="utf8") as file:
@@ -235,7 +231,7 @@ def ScriptExtractor():
             # Start abcde
             subprocess.run(f"perl \"{abcdeProgram}\" --stats --mode bin2text -cm abcde::Cartographer \"{filename}\" \"{filename}_commands.txt\" \"{outputFileName}\" -s")
 
-            logging.info("Script dump finished, making some finishing touches on the dumped script...")
+            logging.info(f"{filename.name}: Script dump finished, making some finishing touches on the dumped script...")
 
             # Open the file
             with open(f"{outputFileName}.txt", "r+", encoding="utf8") as file:
@@ -250,7 +246,7 @@ def ScriptExtractor():
                 del lines[0:17]
 
                 # Write 5 newlines at the end
-                lines.append("\n\n\n\n\n")
+                lines.append("\n\n\n\n")
 
                 # Move the pointer to the beginning of the file
                 file.seek(0)
@@ -264,12 +260,12 @@ def ScriptExtractor():
             # If abcdeAtlasOption = 1, then open the output file and read all lines
             if abcdeAtlasOption == "1":
 
-                logging.info("abcdeAtlasOption == '1'")
+                logging.info(f"{filename.name}: abcdeAtlasOption == '1'")
 
                 with open(f"{outputFileName}.txt", "rt", encoding="utf8") as file:
                     lines = file.readlines()
 
-                logging.info("Copying the PointerStart and TextblockStart values from the first pointer...")
+                logging.info(f"{filename.name}: Copying the PointerStart and TextblockStart values from the first pointer...")
                 # Example "$FA0" and "$FD0":
                 # //POINTER #0 @ $FA0 - STRING #0 @ $FD0
                 line2data  = lines[0].split() # Split the line into a list
@@ -277,7 +273,7 @@ def ScriptExtractor():
                 textBlockStartBroken = line2data[8] # Get the 9th item in the list
                 textBlockStart = textBlockStartBroken.strip() # Remove the "\n" from the 9th item
 
-                logging.info("Creating the Atlas code and inserting the values...")
+                logging.info(f"{filename.name}: Creating the Atlas code and inserting the values...")
 
                 abcdeAtlasCode = dedent(f"""\
                     #VAR(dialogue, TABLE)
@@ -293,7 +289,7 @@ def ScriptExtractor():
                     #JMP({textBlockStart})
                     #HDR({textBlockStart})""")
 
-                logging.info("Opening the file and saving the Atlas code + the actual script...")
+                logging.info(f"{filename.name}: Opening the file and saving the Atlas code + the actual script...")
 
                 with open(f"{outputFileName}.txt",'rt', encoding="utf8") as contents:
                     save = contents.read()
@@ -303,12 +299,12 @@ def ScriptExtractor():
                     contents.write("\n\n\n") # 3 newlines to give proper spacing
                     contents.write(save)
 
-            logging.info("Moving file to output folder...")
+            logging.info(f"{filename.name}: Moving file to output folder...")
             shutil.move(f"{outputFileName}.txt", outputFolder)
 
         except Exception as Error:
-            print(f"{filename} does not contain a script or is a dummyfile, skipping the file.")
-            print(Error)
+            logging.info(f"{filename.name}: does not contain a script or is a dummyfile, skipping the file.")
+            logging.info(Error)
             continue
 
 
