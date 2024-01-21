@@ -494,9 +494,15 @@ def ScriptMerger():
     if len(jpnfile_chunks) == len(engfile_chunks):
 
         # Add "\n" to the first "//POINTER" and remove the lines that contain "//POINTER" and "#W32" in the engfile list
-        engfile_chunks = [re.sub(r'//POINTER #0', '\n//POINTER #0', chunks) for chunks in engfile_chunks]
-        engfile_chunks = [re.sub(r'(\n//POINTER).+?(?=\n)', '', chunks) for chunks in engfile_chunks]
-        engfile_chunks = [re.sub(r'(\n#W32).+?(?=\n)', '', chunks) for chunks in engfile_chunks]
+        engfile_chunks = [
+            re.sub(r'(\n#W32).+?(?=\n)', '', 
+            re.sub(r'(\n//POINTER).+?(?=\n)', '', 
+            re.sub(r'//POINTER #0', '\n//POINTER #0',
+                    chunk)
+                )
+            )
+            for chunk in engfile_chunks
+        ]
 
         # Create empty list for the combined chunks
         out_chunks = []
@@ -533,9 +539,15 @@ def ScriptMerger():
         if question == "1":
 
             # Add "\n" to the first "//POINTER" and remove the lines that contain "//POINTER" and "#W32" in the engfile list
-            engfile_chunks = [re.sub(r'//POINTER #0', '\n//POINTER #0', chunks) for chunks in engfile_chunks]
-            engfile_chunks = [re.sub(r'(\n//POINTER).+?(?=\n)', '', chunks) for chunks in engfile_chunks]
-            engfile_chunks = [re.sub(r'(\n#W32).+?(?=\n)', '', chunks) for chunks in engfile_chunks]
+            engfile_chunks = [
+                re.sub(r'(\n#W32).+?(?=\n)', '', 
+                re.sub(r'(\n//POINTER).+?(?=\n)', '', 
+                re.sub(r'//POINTER #0', '\n//POINTER #0',
+                       chunk)
+                    )
+                )
+                for chunk in engfile_chunks
+            ]
 
             # Create empty list for the combined chunks
             out_chunks = []
