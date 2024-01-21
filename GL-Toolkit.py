@@ -9,14 +9,16 @@ from textwrap import dedent
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
-# Create a Path object for the current script's directory
-current_folder_path = Path(__file__).resolve().parent
-
 # Set general variables
+current_folder_path = Path(__file__).resolve().parent
 inputFolder = current_folder_path / "Input"
 outputFolder = current_folder_path / "Output"
 abcdeProgram = current_folder_path / "3rdparty" / "abcde" / "abcde.pl"
 abcdeScriptTableFile = current_folder_path / "3rdparty" / "abcde" / "GL_Script.tbl"
+abcdeByteCodeTableFile = current_folder_path / "3rdparty" / "abcde" / "GL_ByteCode.tbl"
+quickBMSProgram = current_folder_path / "3rdparty" / "quickbms" / "quickbms.exe"
+growlanserquickBMS = current_folder_path / "3rdparty" / "quickbms" / "growlanser.bms"
+
 
 def clear_screen(): # Function to clear the command prompt screen
     os.system("cls")
@@ -321,94 +323,80 @@ def ByteCodeExtractor():
 
     clear_screen()
 
-    # Set Path objects for the Python and Perl commands
-    inputFolder = current_folder_path / "Input"
-    outputFolder = current_folder_path / "Output"
-    abcdeProgram = current_folder_path / "3rdparty" / "abcde" / "abcde.pl"
-    abcdeByteCodeTableFile = current_folder_path / "3rdparty" / "abcde" / "GL_Script.tbl"
+    logging.info("Starting the ByteCode Dump process, thank you for flying with Risae Nyan Airlines.")
+    logging.info("We hope you will enjoy the ride and results of this tool!")
 
     # List the files inside "input_folder" and execute commands on each file (loop)
     for filename in inputFolder.iterdir():
-
-        # Create variables for the files
-        inputFile = f"{inputFolder}\\{filename}"
-        outputFile = f"{outputFolder}\\{filename}_output"
-        outputFileName = f"{outputFile}.txt"
 
         # Execute pythonByteCodeExtractor and abcde
         sdfBytesPosition = 40
         fileBeginning = -44
 
         # Open file in "read byte", move pointer to the bytes that point to SDF and read the next 4 bytes
-        bytestream = open(inputFile, "rb")
-        bytestream.seek(sdfBytesPosition, 1)
-        sdfLocationHex = bytestream.read(4).hex()
+        with open(filename, "rb") as bytestream:
+            bytestream.seek(sdfBytesPosition, 1)
+            sdfLocationHex = bytestream.read(4).hex()
 
-        # Reorder bytes into proper order
-        newSDFLocationHex = sdfLocationHex[6:8] + sdfLocationHex[4:6] + sdfLocationHex[2:4] + sdfLocationHex[0:2]
+            # Reorder bytes into proper order
+            newSDFLocationHex = sdfLocationHex[6:8] + sdfLocationHex[4:6] + sdfLocationHex[2:4] + sdfLocationHex[0:2]
 
-        # Convert hexadecimal value to decimal, go back to the beginning of the file and jump to the SDF location
-        sdfLocationDecimal = int(newSDFLocationHex, 16)
-        bytestream.seek(fileBeginning, 1)
-        bytestream.seek(sdfLocationDecimal, 1)
+            # Convert hexadecimal value to decimal, go back to the beginning of the file and jump to the SDF location
+            sdfLocationDecimal = int(newSDFLocationHex, 16)
+            bytestream.seek(fileBeginning, 1)
+            bytestream.seek(sdfLocationDecimal, 1)
 
+            bytestream.seek(288, 1)
 
-        bytestream.seek(288, 1)
+            # ByteCode Start Location Hex
+            bCStartLocationHex = bytestream.read(4).hex()
 
-        # ByteCode Start Location Hex
-        bCStartLocationHex = bytestream.read(4).hex()
+            # Reorder bytes into proper order
+            newbCStartLocationHex = bCStartLocationHex[6:8] + bCStartLocationHex[4:6] + bCStartLocationHex[2:4] + bCStartLocationHex[0:2]
 
-        # Reorder bytes into proper order
-        newbCStartLocationHex = bCStartLocationHex[6:8] + bCStartLocationHex[4:6] + bCStartLocationHex[2:4] + bCStartLocationHex[0:2]
+            # Convert hexadecimal value to decimal
+            newbCStartLocationDecimal = int(newbCStartLocationHex, 16)
 
-        # Convert hexadecimal value to decimal
-        newbCStartLocationDecimal = int(newbCStartLocationHex, 16)
+            # ByteCode End Location Hex
+            bCEndLocationHex = bytestream.read(4).hex()
 
+            # Reorder bytes into proper order
+            newbCEndLocationHex = bCEndLocationHex[6:8] + bCEndLocationHex[4:6] + bCEndLocationHex[2:4] + bCEndLocationHex[0:2]
 
-        # ByteCode End Location Hex
-        bCEndLocationHex = bytestream.read(4).hex()
+            # Convert hexadecimal value to decimal
+            newbCEndLocationDecimal = int(newbCEndLocationHex, 16)
 
-        # Reorder bytes into proper order
-        newbCEndLocationHex = bCEndLocationHex[6:8] + bCEndLocationHex[4:6] + bCEndLocationHex[2:4] + bCEndLocationHex[0:2]
+            bytestream.seek(-168, 1)
+            bytestream.seek(newbCStartLocationDecimal, 1)
 
-        # Convert hexadecimal value to decimal
-        newbCEndLocationDecimal = int(newbCEndLocationHex, 16)
+            # ByteCode Real Start Location Hex
+            bCRealStartLocationHex = bytestream.read(2).hex()
 
-        bytestream.seek(-168, 1)
-        bytestream.seek(newbCStartLocationDecimal, 1)
+            # Reorder bytes into proper order
+            newbCRealStartLocationHex = bCRealStartLocationHex[2:4] + bCRealStartLocationHex[0:2]
 
-        # ByteCode Real Start Location Hex
-        bCRealStartLocationHex = bytestream.read(2).hex()
+            # Convert hexadecimal value to decimal
+            newbCRealStartLocationDecimal = int(newbCRealStartLocationHex, 16)
 
-        # Reorder bytes into proper order
-        newbCRealStartLocationHex = bCRealStartLocationHex[2:4] + bCRealStartLocationHex[0:2]
+            bytestream.seek(-2, 1)
+            bytestream.seek(-newbCStartLocationDecimal, 1)
+            bytestream.seek(newbCRealStartLocationDecimal, 1)
 
-        # Convert hexadecimal value to decimal
-        newbCRealStartLocationDecimal = int(newbCRealStartLocationHex, 16)
+            # Save ByteCode Start Hex in variable
+            bCStartDecimal = bytestream.tell()
+            bCStartHex = hex(bCStartDecimal)
+            bCStartHexClean = bCStartHex.replace("0x", "")
 
-        bytestream.seek(-2, 1)
-        bytestream.seek(-newbCStartLocationDecimal, 1)
-        bytestream.seek(newbCRealStartLocationDecimal, 1)
+            bytestream.seek(-newbCRealStartLocationDecimal, 1)
+            bytestream.seek(newbCEndLocationDecimal, 1)
 
-        # Save ByteCode Start Hex in variable
-        bCStartDecimal = bytestream.tell()
-        bCStartHex = hex(bCStartDecimal)
-        bCStartHexClean = bCStartHex.replace("0x", "")
-
-        bytestream.seek(-newbCRealStartLocationDecimal, 1)
-        bytestream.seek(newbCEndLocationDecimal, 1)
-
-        # Save ByteCode End Hex in variable
-        bCEndDecimal = bytestream.tell()
-        bCEndHex = hex(bCEndDecimal)
-        bCEndHexClean = bCEndHex.replace("0x", "")
-
-        # Close bytestream since its not used at this point
-        bytestream.close()
+            # Save ByteCode End Hex in variable
+            bCEndDecimal = bytestream.tell()
+            bCEndHex = hex(bCEndDecimal)
+            bCEndHexClean = bCEndHex.replace("0x", "")
 
         # Start of writing the hex information to the abcde commands file
-        outputfile = (inputFile + "_commands.txt")
-        with open(outputfile, "wt", encoding="utf8") as file:
+        with open(f"{filename}_commands.txt", "wt", encoding="utf8") as file:
             file.write(dedent(f"""\
                 #GAME NAME:            Growlanser 5/6
 
@@ -422,7 +410,10 @@ def ByteCodeExtractor():
                 #END BLOCK"""))
 
         # Start abcde
-        subprocess.run(f"perl {abcdeProgram} -m bin2text --multi-table-files -cm abcde::Cartographer \"{inputFile}\" \"{inputFile}_commands.txt\" \"{outputFileName}\" -s")
+        subprocess.run(f"perl \"{abcdeProgram}\" --stats --mode bin2text --multi-table-files -cm abcde::Cartographer \"{filename}\" \"{filename}_commands.txt\" \"{filename}\" -s")
+
+        logging.info("Moving file to output folder...")
+        shutil.move(f"{filename}.txt", outputFolder)
 
 
 def GameFileExtraction():
@@ -439,15 +430,6 @@ def GameFileExtraction():
         Enter the number of the option you choose: """))
 
     clear_screen()
-
-    # Create a variable that holds the current path
-    currentFolderPath = os.getcwd()
-
-    # Set variables for the filepaths and programs
-    inputFolder = f"{currentFolderPath}\\Input"
-    outputFolder = f"{currentFolderPath}\\Output"
-    quickBMSProgram = f"\"{currentFolderPath}\\3rdparty\\quickbms\\quickbms.exe\""
-    growlanserquickBMS = f"\"{currentFolderPath}\\3rdparty\\quickbms\\growlanser.bms\""
 
     # If option 1 was chosen, start the quickBMSExtraction process
     if quickBMSExtractionOption == "1":
@@ -500,12 +482,6 @@ def GameFileInsertion():
 
     clear_screen()
 
-    # Set Path objects for the filepaths and programs
-    inputFolder = current_folder_path / "Input"
-    outputFolder = current_folder_path / "Output"
-    quickBMSProgram = current_folder_path / "3rdparty" / "quickbms" / "quickbms.exe"
-    growlanserquickBMS = current_folder_path / "3rdparty" / "quickbms" / "growlanser.bms"
-
     # List the files inside "output_folder" and execute commands on each file (loop)
     for filename in outputFolder.iterdir():
 
@@ -516,10 +492,6 @@ def GameFileInsertion():
 def ScriptMerger():
 
     clear_screen()
-
-    # Set Path objects for the Python and Perl commands
-    inputFolder = current_folder_path / "Input"
-    outputFolder = current_folder_path / "Output"
 
     # Create variables based on the files in the inputFolder
     dir_list = os.listdir(inputFolder)
@@ -681,15 +653,17 @@ def main(): # Main function
 
     # Delete the Input and output directory and recreate it
     if os.path.exists(inputFolder):
-        logging.info("Input Folder found, recreating")
+        logging.info("Input folder found, removing it")
         shutil.rmtree(inputFolder)
 
+    logging.info("Creating Input folder")
     os.mkdir(inputFolder)
 
     if os.path.exists(outputFolder):
-        logging.info("Output Folder found, recreating")
+        logging.info("Output folder found, removing it")
         shutil.rmtree(outputFolder)
 
+    logging.info("Creating Output folder")
     os.mkdir(outputFolder)
 
     if tool == "1": # Execute the ScriptDump process
