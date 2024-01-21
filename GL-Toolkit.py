@@ -409,22 +409,16 @@ def GameFileExtraction():
     # If option 1 was chosen, start the quickBMSExtraction process
     if quickBMSExtractionOption == "1":
 
-        # List the files inside "inputFolder" and execute commands on each file (loop)
-        dir_list = os.listdir(inputFolder)
-        for filename in dir_list:
-
-            # Execute quickBMS command
-            subprocess.run(f"{quickBMSProgram} -w -d {growlanserquickBMS} \"{inputFolder}\\{filename}\" \"{outputFolder}\"")
+        # Execute quickBMS command
+        for filename in inputFolder.iterdir():
+            subprocess.run(f"{quickBMSProgram} -w -d {growlanserquickBMS} \"{filename}\" \"{outputFolder}\"")
 
     # If option 2 was chosen, start the extrended quickBMSExtraction process
     if quickBMSExtractionOption == "2":
 
-        # List the files inside "inputFolder" and execute commands on each file (loop)
-        dir_list = os.listdir(inputFolder)
-        for filename in dir_list:
-
-            # Execute quickBMS command
-            subprocess.run(f"{quickBMSProgram} -w -d {growlanserquickBMS} \"{inputFolder}\\{filename}\" \"{outputFolder}\"")
+        # Execute quickBMS command
+        for filename in inputFolder.iterdir():
+            subprocess.run(f"{quickBMSProgram} -w -d {growlanserquickBMS} \"{filename}\" \"{outputFolder}\"")
 
             # List the files inside "inputFolder" and execute commands on each file (loop)
             newOutputFolder = f"{outputFolder}\\{filename}"
@@ -457,28 +451,24 @@ def GameFileInsertion():
 
     clear_screen()
 
-    # List the files inside "output_folder" and execute commands on each file (loop)
+    # Execute quickBMS command
     for filename in outputFolder.iterdir():
-
-        # Execute quickBMS command
-        subprocess.run(f"{quickBMSProgram} -w -r -r {growlanserquickBMS} \"{outputFolder}\\{filename}\" \"{inputFolder}\"")
+        subprocess.run(f"{quickBMSProgram} -w -r -r {growlanserquickBMS} \"{filename}\" \"{inputFolder}\"")
 
 
 def ScriptMerger():
 
     clear_screen()
 
-    # Create variables based on the files in the inputFolder
-    dir_list = os.listdir(inputFolder)
-
     jpn = []
     eng = []
 
-    for names in dir_list:
-        if names.endswith("JPN.txt"):
-            jpn.append(names)
-        elif names.endswith("ENG.txt"):
-            eng.append(names)
+    for filename in inputFolder.iterdir():
+        if filename.endswith("JPN.txt"):
+            jpn.append(filename)
+
+        elif filename.endswith("ENG.txt"):
+            eng.append(filename)
 
     jpnstring = "".join(jpn)
     engstring = "".join(eng)
