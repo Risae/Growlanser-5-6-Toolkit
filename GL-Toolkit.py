@@ -13,9 +13,11 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(mess
 current_folder_path = Path(__file__).resolve().parent
 inputFolder = current_folder_path / "Input"
 outputFolder = current_folder_path / "Output"
+
 abcdeProgram = current_folder_path / "3rdparty" / "abcde" / "abcde.pl"
 abcdeScriptTableFile = current_folder_path / "3rdparty" / "abcde" / "GL_Script.tbl"
 abcdeByteCodeTableFile = current_folder_path / "3rdparty" / "abcde" / "GL_ByteCode.tbl"
+
 quickBMSProgram = current_folder_path / "3rdparty" / "quickbms" / "quickbms.exe"
 growlanserquickBMS = current_folder_path / "3rdparty" / "quickbms" / "growlanser.bms"
 
