@@ -454,7 +454,7 @@ def GameFileInsertion():
 
     # Execute quickBMS command
     for filename in outputFolder.iterdir():
-        subprocess.run(f"{quickBMSProgram} -w -r -r {growlanserquickBMS} \"{filename}\" \"{inputFolder}\"")
+        subprocess.run(f"{quickBMSProgram} -w -r -r \"{growlanserquickBMS}\" \"{filename}\" \"{inputFolder}\"")
 
 
 def ScriptMerger():
