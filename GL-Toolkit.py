@@ -413,40 +413,39 @@ def GameFileExtraction():
 
         # Execute quickBMS command
         for filename in inputFolder.iterdir():
-            subprocess.run(f"{quickBMSProgram} -w -d {growlanserquickBMS} \"{filename}\" \"{outputFolder}\"")
+            subprocess.run(f"{quickBMSProgram} -w -d \"{growlanserquickBMS}\" \"{filename}\" \"{outputFolder}\"")
 
     # If option 2 was chosen, start the extrended quickBMSExtraction process
     if quickBMSExtractionOption == "2":
 
         # Execute quickBMS command
         for filename in inputFolder.iterdir():
-            subprocess.run(f"{quickBMSProgram} -w -d {growlanserquickBMS} \"{filename}\" \"{outputFolder}\"")
-
-            # List the files inside "inputFolder" and execute commands on each file (loop)
-            newOutputFolder = f"{outputFolder}\\{filename}"
+            subprocess.run(f"{quickBMSProgram} -w -d \"{growlanserquickBMS}\" \"{filename}\" \"{outputFolder}\"")
 
             # Create a list of all the file extentions in the newOutputFolder
             SplitTypes=[]
-            for file in os.listdir(newOutputFolder):
+            for file in os.listdir(outputFolder):
                 SplitTypes.append(file.split('.')[-1])
 
             # Remove dublicates from the list
             newList = list(dict.fromkeys(SplitTypes))
 
             # Create blacklist of files that can't be extracted a second time (at least with the current quickbms script)
-            blacklist = ["000", "v_0", "b00", "sel", "her", "mot", "MAPTBL", "txt", "MAPOBJ"]
+            blacklist = ["000", "v_0", "b00", "sel", "her", "mot", "MAPTBL", "txt", "MAPOBJ", "IRX"]
 
             # If a blacklistItem is exists in newList, remove it from the list
             for blacklistItem in blacklist:
                 if blacklistItem in newList:
                     newList.remove(blacklistItem)
 
+            # List the files inside "inputFolder" and execute commands on each file (loop)
+            newOutputFolder = outputFolder / filename.name
+
             # Start the extended quickBMS extration process
             for fileType in newList:
 
                 # Create quickBMS command and execute it
-                quickBMSCMD2 = f"{quickBMSProgram} -w -d -F \"*.{fileType}\" {growlanserquickBMS} \"{newOutputFolder}\" \"{newOutputFolder}\""
-                subprocess.run(quickBMSCMD2)
+                subprocess.run(f"{quickBMSProgram} -w -d -F \"*.{fileType}\" \"{growlanserquickBMS}\" \"{newOutputFolder}\" \"{newOutputFolder}\"")
 
 
 def GameFileInsertion():
