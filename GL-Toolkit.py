@@ -163,7 +163,7 @@ def ScriptExtractor():
                 # Move 32 bytes back to the original SDF location
                 bytestream.seek(-32, 1)
 
-                ### Get Start of the script position into a variable 
+                ### Get Start of the script position into a variable
                 # Move 12 bytes ahead, read 4 bytes (start of the script) and reorder bytes into proper order
                 bytestream.seek(12, 1)
                 scriptLocationHex = bytestream.read(4).hex()
@@ -496,8 +496,8 @@ def ScriptMerger():
 
         # Add "\n" to the first "//POINTER" and remove the lines that contain "//POINTER" and "#W32" in the engfile list
         engfile_chunks = [
-            re.sub(r'(\n#W32).+?(?=\n)', '', 
-            re.sub(r'(\n//POINTER).+?(?=\n)', '', 
+            re.sub(r'(\n#W32).+?(?=\n)', '',
+            re.sub(r'(\n//POINTER).+?(?=\n)', '',
             re.sub(r'//POINTER #0', '\n//POINTER #0',
                     chunk)
                 )
@@ -519,11 +519,11 @@ def ScriptMerger():
         # Save the merged script in an output file
         with open(outputFileName, "wt", encoding="utf8") as file:
             file.write(merged_content)
-            print("Successfully merged the script.")    
+            print("Successfully merged the script.")
 
     # If the scripts do not match
     else:
-    
+
         # Ask the user if he wants to semi-automatically merge the scripts
         question = input(dedent("""\
             The Japanese and English script does not have the same amount of entries.
@@ -541,8 +541,8 @@ def ScriptMerger():
 
             # Add "\n" to the first "//POINTER" and remove the lines that contain "//POINTER" and "#W32" in the engfile list
             engfile_chunks = [
-                re.sub(r'(\n#W32).+?(?=\n)', '', 
-                re.sub(r'(\n//POINTER).+?(?=\n)', '', 
+                re.sub(r'(\n#W32).+?(?=\n)', '',
+                re.sub(r'(\n//POINTER).+?(?=\n)', '',
                 re.sub(r'//POINTER #0', '\n//POINTER #0',
                        chunk)
                     )
